@@ -22,7 +22,8 @@ target 'bitLabs' do
   use_react_native!(
     :path => config[:reactNativePath],
     :app_path => "#{Pod::Config.instance.installation_root}/..",
-    :new_arch_enabled => false
+    :new_arch_enabled => false,
+    :hermes_enabled => false
   )
 
   post_install do |installer|
