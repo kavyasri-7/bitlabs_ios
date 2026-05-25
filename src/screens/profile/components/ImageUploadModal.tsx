@@ -122,7 +122,17 @@ const ImageUploadModal: React.FC<ImageUploadModalProps> = ({
         errorCode: response.errorCode,
         errorMessage: response.errorMessage,
       });
-      showToast('error', response.errorMessage || 'Failed to pick image. Please try again.');
+      
+      let friendlyMessage = 'Failed to pick image. Please try again.';
+      if (response.errorCode === 'camera_unavailable') {
+        friendlyMessage = 'Camera is not available on this device (e.g. simulator). Please choose from your library instead.';
+      } else if (response.errorCode === 'permission') {
+        friendlyMessage = 'Permission to access camera/library was denied. Please enable it in your device settings.';
+      } else if (response.errorMessage) {
+        friendlyMessage = response.errorMessage;
+      }
+      
+      showToast('error', friendlyMessage);
       return;
     }
 

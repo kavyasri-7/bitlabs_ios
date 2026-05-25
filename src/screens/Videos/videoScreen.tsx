@@ -454,106 +454,55 @@ const VerifiedVideosScreen: React.FC<{
               }}
             >
               {videoSource && (
-                <Pressable
+                <Video
+                  ref={videoRef}
+                  source={videoSource}
                   style={{ flex: 1 }}
-                  onPress={() => setPaused(!paused)}
-                >
-                  <Video
-                    ref={videoRef}
-                    source={videoSource}
-                    style={{ flex: 1 }}
-                    resizeMode="contain"
-                    paused={paused}
-                    muted={muted}
-                    controls={false}
-                    progressUpdateInterval={
-                      PROGRESS_UPDATE_INTERVAL
-                    }
-                    onLoad={(d) => {
-                      setDuration(d.duration);
-                    }}
-                    onProgress={(x: any) => {
-                      handleProgress(x);
+                  resizeMode="contain"
+                  controls={true}
+                  fullscreen={Platform.OS === "ios" ? fsVisible : false}
+                  onFullscreenPlayerDidDismiss={
+                    Platform.OS === "ios" ? closeVideo : undefined
+                  }
+                  progressUpdateInterval={
+                    PROGRESS_UPDATE_INTERVAL
+                  }
+                  onLoad={(d) => {
+                    setDuration(d.duration);
+                  }}
+                  onProgress={(x: any) => {
+                    handleProgress(x);
 
-                      if (isSeekingRef.current) return;
+                    if (isSeekingRef.current) return;
 
-                      const time = Math.max(
-                        0,
-                        x.currentTime || 0
-                      );
+                    const time = Math.max(
+                      0,
+                      x.currentTime || 0
+                    );
 
-                      setCurrentTime(time);
+                    setCurrentTime(time);
 
-                      setProgress(time);
+                    setProgress(time);
 
-                      currentTimeRef.current = time;
-                    }}
-                  />
-                  {paused && (
-                    <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center" }}>
-                      <View style={{ backgroundColor: "rgba(0,0,0,0.5)", borderRadius: 40, padding: 12 }}>
-                        <Icon name="play-arrow" size={48} color="#fff" />
-                      </View>
-                    </View>
-                  )}
-                </Pressable>
+                    currentTimeRef.current = time;
+                  }}
+                />
               )}
 
-              <View style={styles.fsControls}>
+              <View style={[styles.fsControls, { top: 70 }]}>
                 <TouchableOpacity
                   onPress={closeVideo}
                   style={styles.fsCloseBtn}
                 >
                   <Icon
-                    name="close"
-                    size={28}
-                    color="#fff"
-                  />
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setMuted(!muted)}
-                  style={styles.fsCloseBtn}
-                >
-                  <Icon
-                    name={
-                      muted ? "volume-off" : "volume-up"
-                    }
+                    name="arrow-back"
                     size={28}
                     color="#fff"
                   />
                 </TouchableOpacity>
               </View>
 
-              <View style={styles.bottomSlider}>
-                <Text style={styles.timeText}>
-                  {formatTime(currentTime)} /{" "}
-                  {formatTime(duration)}
-                </Text>
 
-                <View
-                  style={{
-                    flex: 1,
-                    marginLeft: 12,
-                    height: 4,
-                    backgroundColor:
-                      "rgba(255,255,255,0.3)",
-                    borderRadius: 2,
-                  }}
-                >
-                  <View
-                    style={{
-                      height: "100%",
-                      backgroundColor: "#F97316",
-                      borderRadius: 2,
-                      width:
-                        duration > 0
-                          ? `${(progress / duration) * 100}%`
-                          : "0%",
-                    }}
-                  />
-                </View>
-              </View>
             </Animated.View>
           </SafeAreaView>
         </Modal>

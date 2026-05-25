@@ -43,8 +43,8 @@ import InterviewPrepPageRN from '../screens/InterviewPreparation/InterviewPrepPa
 import Dashboard from '../screens/HomePage/Home';
 import FeedbackFormsListScreen from '../screens/FeedbackForms/FeedbackFormsListScreen';
 import FeedbackFormDetailScreen from '../screens/FeedbackForms/FeedbackFormDetailScreen';
-import LMSMainPage from '../screens/LMsPage/LMSMainPage';
-import ScormPlayer from '../screens/LMsPage/ScromPlayer';
+//import LMSMainPage from '../screens/LMsPage/LMSMainPage';
+//import ScormPlayer from '../screens/LMsPage/ScromPlayer';
 
 import { toastConfig } from '@components/Toast/toast_config';
 import AskNewtonButton from '@components/FixedButtons/AskNewtonButton';
@@ -502,13 +502,14 @@ const Appnavigator: React.FC<AppnavigatorProps> = ({ onLoadingChange }) => {
               component={FeedbackFormDetailScreen}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="LMSMainPage"
               component={LMSMainPage}
               options={{
                 title: 'LMS Main Page',
                 headerTransparent: true,
                 headerTitleAlign: 'center',
+                headerStatusBarHeight: 25,
                 headerStyle: {
                   backgroundColor: 'transparent',
                 },
@@ -527,6 +528,7 @@ const Appnavigator: React.FC<AppnavigatorProps> = ({ onLoadingChange }) => {
               options={({ route }: any) => ({
                 title: route.params?.courseName || 'SCORM Player',
                 headerTitleAlign: 'center',
+                headerStatusBarHeight: 35,
                 headerStyle: {
                   backgroundColor: '#f8f9fa',
                 },
@@ -534,10 +536,11 @@ const Appnavigator: React.FC<AppnavigatorProps> = ({ onLoadingChange }) => {
                 headerTitleStyle: {
                   fontWeight: 'bold',
                   fontSize: 18,
+                  paddingBottom: 10,
                 },
                 headerBackTitle: '',
               })}
-            />
+            /> */}
           </>
         )}
       </Stack.Navigator>

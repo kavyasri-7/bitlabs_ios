@@ -756,239 +756,55 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
       >
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Edit Education Details</Text>
-            <TouchableOpacity onPress={onClose}>
-              <MaterialIcons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView
-            style={styles.scrollView}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            nestedScrollEnabled={true}
-            automaticallyAdjustKeyboardInsets={true}
-          >
-            {/* Graduation Section */}
-            <View style={[styles.section, { zIndex: (degreeOpen || specializationOpen || courseTypeOpen || startYearOpen || endYearOpen) ? 10000 : 1 }]}>
-              <TouchableOpacity
-                style={styles.sectionHeader}
-                onPress={() => toggleSection('graduation')}>
-                <Text style={styles.sectionTitle}>Graduation Details</Text>
-                <Text style={styles.toggleIcon}>
-                  {expandedSections.graduation ? '−' : '+'}
-                </Text>
+            <View style={styles.header}>
+              <Text style={styles.title}>Edit Education Details</Text>
+              <TouchableOpacity onPress={onClose}>
+                <MaterialIcons name="close" size={24} color="#333" />
               </TouchableOpacity>
-              {expandedSections.graduation && (
-                <View style={styles.sectionContent}>
-                  <View style={[styles.inputContainer, { zIndex: degreeOpen ? 9000 : 100 }]}>
-                    <Text style={styles.label}>Degree <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={degreeOpen}
-                      value={degree}
-                      items={degreeOptions.map(opt => ({ label: opt, value: opt }))}
-                      setOpen={setDegreeOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setDegreeOpen(true);
-                        setFocusedField('graduation.degree');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={value => {
-                        setDegree(value);
-                        setErrors(prev => ({ ...prev, 'graduation.degree': '', 'graduation.specialization': '' }));
-                      }}
-                      placeholder="Select Degree"
-                      style={[
-                        styles.dropdown,
-                        errors['graduation.degree'] && styles.errorInput,
-                        focusedField === 'graduation.degree' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      listMode="SCROLLVIEW"
-                      zIndex={3000}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['graduation.degree'] && (
-                      <Text style={styles.errorText}>{errors['graduation.degree']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputGroup, { zIndex: 90, position: 'relative' }]}>
-                    <Text style={styles.label}>University/Institute <Text style={styles.required}>*</Text></Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        errors['graduation.university'] && styles.inputError,
-                        focusedField === 'graduation.university' && styles.inputFocused,
-                      ]}
-                      value={formData.graduation.university || ''}
-                      onChangeText={value => {
-                        handleChange('graduation', 'university', value);
-                        // Real-time validation with functional update
-                        setErrors(prevErrors => {
-                          const newErrors = { ...prevErrors };
-                          if (value.trim().length > 0 && value.trim().length < 3) {
-                            newErrors['graduation.university'] = 'University must be at least 3 characters';
-                          } else {
-                            delete newErrors['graduation.university'];
-                          }
-                          return newErrors;
-                        });
-                      }}
-                      onFocus={() => setFocusedField('graduation.university')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Enter university"
-                      placeholderTextColor="#9ca3af"
-                    />
-                    {errors['graduation.university'] && (
-                      <Text style={styles.errorText}>{errors['graduation.university']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputContainer, { zIndex: specializationOpen ? 8000 : 80 }]}>
-                    <Text style={styles.label}>Specialization <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={specializationOpen}
-                      value={specialization}
-                      items={getSpecializationOptions(degree).map(opt => ({ label: opt, value: opt }))}
-                      setOpen={setSpecializationOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setSpecializationOpen(true);
-                        setFocusedField('graduation.specialization');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={(value: any) => {
-                        setSpecialization(value);
-                        setErrors(prev => ({ ...prev, 'graduation.specialization': '' }));
-                      }}
-                      placeholder="Select Specialization"
-                      style={[
-                        styles.dropdown,
-                        errors['graduation.specialization'] && styles.errorInput,
-                        focusedField === 'graduation.specialization' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      labelStyle={styles.dropdownText}
-                      listItemLabelStyle={styles.dropdownText}
-                      listItemContainerStyle={styles.dropdownListItem}
-                      listMode="SCROLLVIEW"
-                      zIndex={3000}
-                      disabled={!degree}
-                      disabledStyle={styles.inputDisabled}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['graduation.specialization'] && (
-                      <Text style={styles.errorText}>{errors['graduation.specialization']}</Text>
-                    )}
-                    {!degree && (
-                      <Text style={styles.hintText}>Please select a degree first</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputContainer, { zIndex: courseTypeOpen ? 7000 : 70 }]}>
-                    <Text style={styles.label}>Course Type <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={courseTypeOpen}
-                      value={courseType}
-                      items={courseTypeOptions.map(opt => ({ label: opt, value: opt }))}
-                      setOpen={setCourseTypeOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setCourseTypeOpen(true);
-                        setFocusedField('graduation.courseType');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={value => {
-                        setCourseType(value);
-                        setErrors(prev => ({ ...prev, 'graduation.courseType': '' }));
-                      }}
-                      placeholder="Select Course Type"
-                      style={[
-                        styles.dropdown,
-                        errors['graduation.courseType'] && styles.errorInput,
-                        focusedField === 'graduation.courseType' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      listMode="SCROLLVIEW"
-                      zIndex={3000}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['graduation.courseType'] && (
-                      <Text style={styles.errorText}>{errors['graduation.courseType']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputRow, { zIndex: (startYearOpen || endYearOpen) ? 6000 : 60, position: 'relative' }]}>
-                    <View style={[styles.inputContainer, { flex: 1, zIndex: startYearOpen ? 6000 : 60 }]}>
-                      <Text style={styles.label}>Start Year <Text style={styles.required}>*</Text></Text>
+            </View>
+
+            <ScrollView
+              style={styles.scrollView}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled={true}
+            >
+              {/* Graduation Section */}
+              <View style={[styles.section, { zIndex: (degreeOpen || specializationOpen || courseTypeOpen || startYearOpen || endYearOpen) ? 10000 : 1 }]}>
+                <TouchableOpacity
+                  style={styles.sectionHeader}
+                  onPress={() => toggleSection('graduation')}>
+                  <Text style={styles.sectionTitle}>Graduation Details</Text>
+                  <Text style={styles.toggleIcon}>
+                    {expandedSections.graduation ? '−' : '+'}
+                  </Text>
+                </TouchableOpacity>
+                {expandedSections.graduation && (
+                  <View style={styles.sectionContent}>
+                    <View style={[styles.inputContainer, { zIndex: degreeOpen ? 9000 : 100 }]}>
+                      <Text style={styles.label}>Degree <Text style={styles.required}>*</Text></Text>
                       <DropDownPicker
-                        open={startYearOpen}
-                        value={formData.graduation.startYear ? parseInt(formData.graduation.startYear) : null}
-                        items={YEARS.map(year => ({ label: year.toString(), value: year }))}
-                        setOpen={setStartYearOpen}
+                        open={degreeOpen}
+                        value={degree}
+                        items={degreeOptions.map(opt => ({ label: opt, value: opt }))}
+                        setOpen={setDegreeOpen}
                         onOpen={() => {
                           closeAllDropdowns();
-                          setStartYearOpen(true);
-                          setFocusedField('graduation.startYear');
+                          setDegreeOpen(true);
+                          setFocusedField('graduation.degree');
                         }}
                         onClose={() => {
                           setFocusedField(null);
                         }}
-                        setValue={(value: any) => {
-                          const yearValue = typeof value === 'function' ? value(formData.graduation.startYear ? parseInt(formData.graduation.startYear) : null) : value;
-                          handleChange('graduation', 'startYear', yearValue ? yearValue.toString() : '');
-                          setErrors(prev => {
-                            const newErrors: Record<string, string> = { ...prev, 'graduation.startYear': '' };
-                            if (yearValue) {
-                              const startYearNum = parseInt(yearValue.toString(), 10);
-                              // Check end year if it exists
-                              if (formData.graduation.endYear) {
-                                const endYearNum = parseInt(formData.graduation.endYear, 10);
-                                if (!isNaN(endYearNum) && !isNaN(startYearNum)) {
-                                  if (endYearNum === startYearNum) {
-                                    newErrors['graduation.endYear'] = 'End year cannot be the same as start year';
-                                  } else if (endYearNum < startYearNum) {
-                                    newErrors['graduation.endYear'] = 'End year cannot be earlier than start year';
-                                  }
-                                }
-                              }
-                              // Check against Class XII (chronological order)
-                              if (formData.classXii.passingYear) {
-                                const xiiYearNum = parseInt(formData.classXii.passingYear, 10);
-                                if (!isNaN(xiiYearNum) && startYearNum < xiiYearNum) {
-                                  newErrors['graduation.startYear'] = 'Graduation start year must be after or equal to Class XII passing year (chronological order: 10th → Inter → BTech)';
-                                }
-                              }
-                              // Check against Class X (chronological order)
-                              if (formData.classX.passingYear) {
-                                const xYearNum = parseInt(formData.classX.passingYear, 10);
-                                if (!isNaN(xYearNum) && startYearNum < xYearNum) {
-                                  newErrors['graduation.startYear'] = 'Graduation start year must be after or equal to Class X passing year (chronological order: 10th → Inter → BTech)';
-                                }
-                              }
-                            }
-                            return newErrors;
-                          });
+                        setValue={value => {
+                          setDegree(value);
+                          setErrors(prev => ({ ...prev, 'graduation.degree': '', 'graduation.specialization': '' }));
                         }}
-                        placeholder="Select Start Year"
+                        placeholder="Select Degree"
                         style={[
                           styles.dropdown,
-                          errors['graduation.startYear'] && styles.errorInput,
-                          focusedField === 'graduation.startYear' && styles.inputFocused,
+                          errors['graduation.degree'] && styles.errorInput,
+                          focusedField === 'graduation.degree' && styles.inputFocused,
                         ]}
                         dropDownContainerStyle={styles.dropdownContainer}
                         placeholderStyle={styles.placeholderText}
@@ -998,488 +814,671 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                         searchable={false}
                         closeAfterSelecting={true}
                       />
-                      {errors['graduation.startYear'] && (
-                        <Text style={styles.errorText}>{errors['graduation.startYear']}</Text>
+                      {errors['graduation.degree'] && (
+                        <Text style={styles.errorText}>{errors['graduation.degree']}</Text>
                       )}
                     </View>
-                    <View style={[styles.inputContainer, { flex: 1, zIndex: endYearOpen ? 6000 : 60 }]}>
-                      <Text style={styles.label}>End Year <Text style={styles.required}>*</Text></Text>
+                    <View style={[styles.inputGroup, { zIndex: 90, position: 'relative' }]}>
+                      <Text style={styles.label}>University/Institute <Text style={styles.required}>*</Text></Text>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          errors['graduation.university'] && styles.inputError,
+                          focusedField === 'graduation.university' && styles.inputFocused,
+                        ]}
+                        value={formData.graduation.university || ''}
+                        onChangeText={value => {
+                          handleChange('graduation', 'university', value);
+                          // Real-time validation with functional update
+                          setErrors(prevErrors => {
+                            const newErrors = { ...prevErrors };
+                            if (value.trim().length > 0 && value.trim().length < 3) {
+                              newErrors['graduation.university'] = 'University must be at least 3 characters';
+                            } else {
+                              delete newErrors['graduation.university'];
+                            }
+                            return newErrors;
+                          });
+                        }}
+                        onFocus={() => setFocusedField('graduation.university')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Enter university"
+                        placeholderTextColor="#9ca3af"
+                      />
+                      {errors['graduation.university'] && (
+                        <Text style={styles.errorText}>{errors['graduation.university']}</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputContainer, { zIndex: specializationOpen ? 8000 : 80 }]}>
+                      <Text style={styles.label}>Specialization <Text style={styles.required}>*</Text></Text>
                       <DropDownPicker
-                        open={endYearOpen}
-                        value={formData.graduation.endYear ? parseInt(formData.graduation.endYear) : null}
-                        items={YEARS.map(year => ({ label: year.toString(), value: year }))}
-                        setOpen={setEndYearOpen}
+                        open={specializationOpen}
+                        value={specialization}
+                        items={getSpecializationOptions(degree).map(opt => ({ label: opt, value: opt }))}
+                        setOpen={setSpecializationOpen}
                         onOpen={() => {
                           closeAllDropdowns();
-                          setEndYearOpen(true);
-                          setFocusedField('graduation.endYear');
+                          setSpecializationOpen(true);
+                          setFocusedField('graduation.specialization');
                         }}
                         onClose={() => {
                           setFocusedField(null);
                         }}
                         setValue={(value: any) => {
-                          const yearValue = typeof value === 'function' ? value(formData.graduation.endYear ? parseInt(formData.graduation.endYear) : null) : value;
-                          handleChange('graduation', 'endYear', yearValue ? yearValue.toString() : '');
+                          setSpecialization(value);
+                          setErrors(prev => ({ ...prev, 'graduation.specialization': '' }));
+                        }}
+                        placeholder="Select Specialization"
+                        style={[
+                          styles.dropdown,
+                          errors['graduation.specialization'] && styles.errorInput,
+                          focusedField === 'graduation.specialization' && styles.inputFocused,
+                        ]}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        placeholderStyle={styles.placeholderText}
+                        textStyle={styles.dropdownText}
+                        labelStyle={styles.dropdownText}
+                        listItemLabelStyle={styles.dropdownText}
+                        listItemContainerStyle={styles.dropdownListItem}
+                        listMode="SCROLLVIEW"
+                        zIndex={3000}
+                        disabled={!degree}
+                        disabledStyle={styles.inputDisabled}
+                        searchable={false}
+                        closeAfterSelecting={true}
+                      />
+                      {errors['graduation.specialization'] && (
+                        <Text style={styles.errorText}>{errors['graduation.specialization']}</Text>
+                      )}
+                      {!degree && (
+                        <Text style={styles.hintText}>Please select a degree first</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputContainer, { zIndex: courseTypeOpen ? 7000 : 70 }]}>
+                      <Text style={styles.label}>Course Type <Text style={styles.required}>*</Text></Text>
+                      <DropDownPicker
+                        open={courseTypeOpen}
+                        value={courseType}
+                        items={courseTypeOptions.map(opt => ({ label: opt, value: opt }))}
+                        setOpen={setCourseTypeOpen}
+                        onOpen={() => {
+                          closeAllDropdowns();
+                          setCourseTypeOpen(true);
+                          setFocusedField('graduation.courseType');
+                        }}
+                        onClose={() => {
+                          setFocusedField(null);
+                        }}
+                        setValue={value => {
+                          setCourseType(value);
+                          setErrors(prev => ({ ...prev, 'graduation.courseType': '' }));
+                        }}
+                        placeholder="Select Course Type"
+                        style={[
+                          styles.dropdown,
+                          errors['graduation.courseType'] && styles.errorInput,
+                          focusedField === 'graduation.courseType' && styles.inputFocused,
+                        ]}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        placeholderStyle={styles.placeholderText}
+                        textStyle={styles.dropdownText}
+                        listMode="SCROLLVIEW"
+                        zIndex={3000}
+                        searchable={false}
+                        closeAfterSelecting={true}
+                      />
+                      {errors['graduation.courseType'] && (
+                        <Text style={styles.errorText}>{errors['graduation.courseType']}</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputRow, { zIndex: (startYearOpen || endYearOpen) ? 6000 : 60, position: 'relative' }]}>
+                      <View style={[styles.inputContainer, { flex: 1, zIndex: startYearOpen ? 6000 : 60 }]}>
+                        <Text style={styles.label}>Start Year <Text style={styles.required}>*</Text></Text>
+                        <DropDownPicker
+                          open={startYearOpen}
+                          value={formData.graduation.startYear ? parseInt(formData.graduation.startYear) : null}
+                          items={YEARS.map(year => ({ label: year.toString(), value: year }))}
+                          setOpen={setStartYearOpen}
+                          onOpen={() => {
+                            closeAllDropdowns();
+                            setStartYearOpen(true);
+                            setFocusedField('graduation.startYear');
+                          }}
+                          onClose={() => {
+                            setFocusedField(null);
+                          }}
+                          setValue={(value: any) => {
+                            const yearValue = typeof value === 'function' ? value(formData.graduation.startYear ? parseInt(formData.graduation.startYear) : null) : value;
+                            handleChange('graduation', 'startYear', yearValue ? yearValue.toString() : '');
+                            setErrors(prev => {
+                              const newErrors: Record<string, string> = { ...prev, 'graduation.startYear': '' };
+                              if (yearValue) {
+                                const startYearNum = parseInt(yearValue.toString(), 10);
+                                // Check end year if it exists
+                                if (formData.graduation.endYear) {
+                                  const endYearNum = parseInt(formData.graduation.endYear, 10);
+                                  if (!isNaN(endYearNum) && !isNaN(startYearNum)) {
+                                    if (endYearNum === startYearNum) {
+                                      newErrors['graduation.endYear'] = 'End year cannot be the same as start year';
+                                    } else if (endYearNum < startYearNum) {
+                                      newErrors['graduation.endYear'] = 'End year cannot be earlier than start year';
+                                    }
+                                  }
+                                }
+                                // Check against Class XII (chronological order)
+                                if (formData.classXii.passingYear) {
+                                  const xiiYearNum = parseInt(formData.classXii.passingYear, 10);
+                                  if (!isNaN(xiiYearNum) && startYearNum < xiiYearNum) {
+                                    newErrors['graduation.startYear'] = 'Graduation start year must be after or equal to Class XII passing year (chronological order: 10th → Inter → BTech)';
+                                  }
+                                }
+                                // Check against Class X (chronological order)
+                                if (formData.classX.passingYear) {
+                                  const xYearNum = parseInt(formData.classX.passingYear, 10);
+                                  if (!isNaN(xYearNum) && startYearNum < xYearNum) {
+                                    newErrors['graduation.startYear'] = 'Graduation start year must be after or equal to Class X passing year (chronological order: 10th → Inter → BTech)';
+                                  }
+                                }
+                              }
+                              return newErrors;
+                            });
+                          }}
+                          placeholder="Select Start Year"
+                          style={[
+                            styles.dropdown,
+                            errors['graduation.startYear'] && styles.errorInput,
+                            focusedField === 'graduation.startYear' && styles.inputFocused,
+                          ]}
+                          dropDownContainerStyle={styles.dropdownContainer}
+                          placeholderStyle={styles.placeholderText}
+                          textStyle={styles.dropdownText}
+                          listMode="SCROLLVIEW"
+                          zIndex={3000}
+                          searchable={false}
+                          closeAfterSelecting={true}
+                        />
+                        {errors['graduation.startYear'] && (
+                          <Text style={styles.errorText}>{errors['graduation.startYear']}</Text>
+                        )}
+                      </View>
+                      <View style={[styles.inputContainer, { flex: 1, zIndex: endYearOpen ? 6000 : 60 }]}>
+                        <Text style={styles.label}>End Year <Text style={styles.required}>*</Text></Text>
+                        <DropDownPicker
+                          open={endYearOpen}
+                          value={formData.graduation.endYear ? parseInt(formData.graduation.endYear) : null}
+                          items={YEARS.map(year => ({ label: year.toString(), value: year }))}
+                          setOpen={setEndYearOpen}
+                          onOpen={() => {
+                            closeAllDropdowns();
+                            setEndYearOpen(true);
+                            setFocusedField('graduation.endYear');
+                          }}
+                          onClose={() => {
+                            setFocusedField(null);
+                          }}
+                          setValue={(value: any) => {
+                            const yearValue = typeof value === 'function' ? value(formData.graduation.endYear ? parseInt(formData.graduation.endYear) : null) : value;
+                            handleChange('graduation', 'endYear', yearValue ? yearValue.toString() : '');
+                            setErrors(prev => {
+                              const newErrors: Record<string, string> = { ...prev };
+                              newErrors['graduation.endYear'] = '';
+                              if (yearValue) {
+                                const endYearNum = parseInt(yearValue.toString(), 10);
+                                // Check start year if it exists
+                                if (formData.graduation.startYear) {
+                                  const startYearNum = parseInt(formData.graduation.startYear, 10);
+                                  if (!isNaN(startYearNum) && !isNaN(endYearNum)) {
+                                    if (endYearNum === startYearNum) {
+                                      newErrors['graduation.endYear'] = 'End year cannot be the same as start year';
+                                    } else if (endYearNum < startYearNum) {
+                                      newErrors['graduation.endYear'] = 'End year cannot be earlier than start year';
+                                    }
+                                  }
+                                }
+                                // Check against Class XII
+                                if (formData.classXii.passingYear) {
+                                  const xiiYearNum = parseInt(formData.classXii.passingYear, 10);
+                                  if (!isNaN(xiiYearNum) && endYearNum < xiiYearNum) {
+                                    newErrors['graduation.endYear'] = 'Graduation passing year must be greater than or equal to Class XII passing year';
+                                  } else {
+                                    // Clear Class XII error if it was about being greater than Graduation
+                                    if (newErrors['classXii.passingYear']?.includes('Graduation')) {
+                                      delete newErrors['classXii.passingYear'];
+                                    }
+                                  }
+                                }
+                                // Check against Class X
+                                if (formData.classX.passingYear) {
+                                  const xYearNum = parseInt(formData.classX.passingYear, 10);
+                                  if (!isNaN(xYearNum) && endYearNum < xYearNum) {
+                                    newErrors['graduation.endYear'] = 'Graduation passing year must be greater than or equal to Class X passing year';
+                                  } else {
+                                    // Clear Class X error if it was about being greater than Graduation
+                                    if (newErrors['classX.passingYear']?.includes('Graduation')) {
+                                      delete newErrors['classX.passingYear'];
+                                    }
+                                  }
+                                }
+                              }
+                              return newErrors;
+                            });
+                          }}
+                          placeholder="Select End Year"
+                          style={[
+                            styles.dropdown,
+                            errors['graduation.endYear'] && styles.errorInput,
+                            focusedField === 'graduation.endYear' && styles.inputFocused,
+                          ]}
+                          dropDownContainerStyle={styles.dropdownContainer}
+                          placeholderStyle={styles.placeholderText}
+                          textStyle={styles.dropdownText}
+                          listMode="SCROLLVIEW"
+                          zIndex={3000}
+                          searchable={false}
+                          closeAfterSelecting={true}
+                        />
+                        {errors['graduation.endYear'] && (
+                          <Text style={styles.errorText}>{errors['graduation.endYear']}</Text>
+                        )}
+                      </View>
+                    </View>
+                    <View style={[styles.inputGroup, { zIndex: 50, position: 'relative' }]}>
+                      <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          errors['graduation.marksPercent'] && styles.inputError,
+                          focusedField === 'graduation.marksPercent' && styles.inputFocused,
+                        ]}
+                        value={gradMarks || formData.graduation.marksPercent || ''}
+                        onChangeText={value => {
+                          // Only allow numbers and one decimal point
+                          const numericValue = value.replace(/[^0-9.]/g, '');
+                          // Ensure only one decimal point
+                          const parts = numericValue.split('.');
+                          const filteredValue = parts.length > 2
+                            ? parts[0] + '.' + parts.slice(1).join('')
+                            : numericValue;
+                          // Limit to 35-100
+                          if (filteredValue) {
+                            const numValue = parseFloat(filteredValue);
+                            if (numValue > 100) {
+                              return;
+                            }
+                          }
+                          setGradMarks(filteredValue);
+                          handleChange('graduation', 'marksPercent', filteredValue);
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors['graduation.marksPercent'];
+                            return newErrors;
+                          });
+                        }}
+                        onFocus={() => setFocusedField('graduation.marksPercent')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Enter percentage (35-100)"
+                        placeholderTextColor="#9ca3af"
+                        keyboardType="decimal-pad"
+                        maxLength={5}
+                      />
+                      {errors['graduation.marksPercent'] && (
+                        <Text style={styles.errorText}>{errors['graduation.marksPercent']}</Text>
+                      )}
+                    </View>
+                  </View>
+                )}
+              </View>
+
+              {/* Class XII Section */}
+              <View style={[styles.section, { zIndex: (xiiBoardOpen || xiiYearOpen) ? 9000 : 1 }]}>
+                <TouchableOpacity
+                  style={styles.sectionHeader}
+                  onPress={() => toggleSection('classXii')}>
+                  <Text style={styles.sectionTitle}>Class XII Details</Text>
+                  <Text style={styles.toggleIcon}>
+                    {expandedSections.classXii ? '−' : '+'}
+                  </Text>
+                </TouchableOpacity>
+                {expandedSections.classXii && (
+                  <View style={styles.sectionContent}>
+                    <View style={[styles.inputContainer, { zIndex: xiiBoardOpen ? 8000 : 100 }]}>
+                      <Text style={styles.label}>Board <Text style={styles.required}>*</Text></Text>
+                      <DropDownPicker
+                        open={xiiBoardOpen}
+                        value={xiiBoard}
+                        items={boardOptions.map(opt => ({ label: opt, value: opt }))}
+                        setOpen={setXiiBoardOpen}
+                        onOpen={() => {
+                          closeAllDropdowns();
+                          setXiiBoardOpen(true);
+                          setFocusedField('classXii.board');
+                        }}
+                        onClose={() => {
+                          setFocusedField(null);
+                        }}
+                        setValue={value => {
+                          setXiiBoard(value);
+                          setErrors(prev => ({ ...prev, 'classXii.board': '' }));
+                        }}
+                        placeholder="Select Board"
+                        style={[
+                          styles.dropdown,
+                          errors['classXii.board'] && styles.errorInput,
+                          focusedField === 'classXii.board' && styles.inputFocused,
+                        ]}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        placeholderStyle={styles.placeholderText}
+                        textStyle={styles.dropdownText}
+                        listMode="SCROLLVIEW"
+                        zIndex={2000}
+                        searchable={false}
+                        closeAfterSelecting={true}
+                      />
+                      {errors['classXii.board'] && (
+                        <Text style={styles.errorText}>{errors['classXii.board']}</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputContainer, { zIndex: xiiYearOpen ? 7000 : 90 }]}>
+                      <Text style={styles.label}>Passing Year <Text style={styles.required}>*</Text></Text>
+                      <DropDownPicker
+                        open={xiiYearOpen}
+                        value={formData.classXii.passingYear ? parseInt(formData.classXii.passingYear) : null}
+                        items={YEARS.map(year => ({ label: year.toString(), value: year }))}
+                        setOpen={setXiiYearOpen}
+                        onOpen={() => {
+                          closeAllDropdowns();
+                          setXiiYearOpen(true);
+                          setFocusedField('classXii.passingYear');
+                        }}
+                        onClose={() => {
+                          setFocusedField(null);
+                        }}
+                        setValue={(value: any) => {
+                          const yearValue = typeof value === 'function' ? value(formData.classXii.passingYear ? parseInt(formData.classXii.passingYear) : null) : value;
+                          handleChange('classXii', 'passingYear', yearValue ? yearValue.toString() : '');
                           setErrors(prev => {
                             const newErrors: Record<string, string> = { ...prev };
-                            newErrors['graduation.endYear'] = '';
+                            newErrors['classXii.passingYear'] = '';
+                            // Clear related field errors that might be affected
                             if (yearValue) {
-                              const endYearNum = parseInt(yearValue.toString(), 10);
-                              // Check start year if it exists
-                              if (formData.graduation.startYear) {
-                                const startYearNum = parseInt(formData.graduation.startYear, 10);
-                                if (!isNaN(startYearNum) && !isNaN(endYearNum)) {
-                                  if (endYearNum === startYearNum) {
-                                    newErrors['graduation.endYear'] = 'End year cannot be the same as start year';
-                                  } else if (endYearNum < startYearNum) {
-                                    newErrors['graduation.endYear'] = 'End year cannot be earlier than start year';
-                                  }
-                                }
-                              }
-                              // Check against Class XII
-                              if (formData.classXii.passingYear) {
-                                const xiiYearNum = parseInt(formData.classXii.passingYear, 10);
-                                if (!isNaN(xiiYearNum) && endYearNum < xiiYearNum) {
-                                  newErrors['graduation.endYear'] = 'Graduation passing year must be greater than or equal to Class XII passing year';
-                                } else {
-                                  // Clear Class XII error if it was about being greater than Graduation
-                                  if (newErrors['classXii.passingYear']?.includes('Graduation')) {
-                                    delete newErrors['classXii.passingYear'];
-                                  }
-                                }
-                              }
+                              const yearNum = parseInt(yearValue.toString(), 10);
                               // Check against Class X
                               if (formData.classX.passingYear) {
                                 const xYearNum = parseInt(formData.classX.passingYear, 10);
-                                if (!isNaN(xYearNum) && endYearNum < xYearNum) {
-                                  newErrors['graduation.endYear'] = 'Graduation passing year must be greater than or equal to Class X passing year';
+                                if (!isNaN(xYearNum) && yearNum < xYearNum) {
+                                  newErrors['classXii.passingYear'] = 'Class XII passing year must be greater than  to Class X passing year';
                                 } else {
-                                  // Clear Class X error if it was about being greater than Graduation
-                                  if (newErrors['classX.passingYear']?.includes('Graduation')) {
+                                  // Clear Class X error if it was about being greater than Class XII
+                                  if (newErrors['classX.passingYear']?.includes('Class XII')) {
                                     delete newErrors['classX.passingYear'];
                                   }
                                 }
                               }
+                              // Check against Graduation
+                              if (formData.graduation.endYear) {
+                                const gradYearNum = parseInt(formData.graduation.endYear, 10);
+                                if (!isNaN(gradYearNum) && yearNum > gradYearNum) {
+                                  newErrors['classXii.passingYear'] = 'Class XII passing year must be less than or equal to Graduation passing year';
+                                } else {
+                                  // Clear Graduation error if it was about being less than Class XII
+                                  if (newErrors['graduation.endYear']?.includes('Class XII')) {
+                                    delete newErrors['graduation.endYear'];
+                                  }
+                                }
+                              }
                             }
                             return newErrors;
                           });
                         }}
-                        placeholder="Select End Year"
+                        placeholder="Select Passing Year"
                         style={[
                           styles.dropdown,
-                          errors['graduation.endYear'] && styles.errorInput,
-                          focusedField === 'graduation.endYear' && styles.inputFocused,
+                          errors['classXii.passingYear'] && styles.errorInput,
+                          focusedField === 'classXii.passingYear' && styles.inputFocused,
                         ]}
                         dropDownContainerStyle={styles.dropdownContainer}
                         placeholderStyle={styles.placeholderText}
                         textStyle={styles.dropdownText}
                         listMode="SCROLLVIEW"
-                        zIndex={3000}
+                        zIndex={2000}
                         searchable={false}
                         closeAfterSelecting={true}
                       />
-                      {errors['graduation.endYear'] && (
-                        <Text style={styles.errorText}>{errors['graduation.endYear']}</Text>
+                      {errors['classXii.passingYear'] && (
+                        <Text style={styles.errorText}>{errors['classXii.passingYear']}</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputGroup, { zIndex: 80, position: 'relative' }]}>
+                      <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          errors['classXii.marksPercent'] && styles.inputError,
+                          focusedField === 'classXii.marksPercent' && styles.inputFocused,
+                        ]}
+                        value={xiiMarks || formData.classXii.marksPercent || ''}
+                        onChangeText={value => {
+                          // Only allow numbers and one decimal point
+                          const numericValue = value.replace(/[^0-9.]/g, '');
+                          // Ensure only one decimal point
+                          const parts = numericValue.split('.');
+                          const filteredValue = parts.length > 2
+                            ? parts[0] + '.' + parts.slice(1).join('')
+                            : numericValue;
+                          // Limit to 35-100
+                          if (filteredValue) {
+                            const numValue = parseFloat(filteredValue);
+                            if (numValue > 100) {
+                              return;
+                            }
+                          }
+                          setXiiMarks(filteredValue);
+                          handleChange('classXii', 'marksPercent', filteredValue);
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors['classXii.marksPercent'];
+                            return newErrors;
+                          });
+                        }}
+                        onFocus={() => setFocusedField('classXii.marksPercent')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Enter percentage (35-100)"
+                        placeholderTextColor="#9ca3af"
+                        keyboardType="decimal-pad"
+                        maxLength={5}
+                      />
+                      {errors['classXii.marksPercent'] && (
+                        <Text style={styles.errorText}>{errors['classXii.marksPercent']}</Text>
                       )}
                     </View>
                   </View>
-                  <View style={[styles.inputGroup, { zIndex: 50, position: 'relative' }]}>
-                    <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        errors['graduation.marksPercent'] && styles.inputError,
-                        focusedField === 'graduation.marksPercent' && styles.inputFocused,
-                      ]}
-                      value={gradMarks || formData.graduation.marksPercent || ''}
-                      onChangeText={value => {
-                        // Only allow numbers and one decimal point
-                        const numericValue = value.replace(/[^0-9.]/g, '');
-                        // Ensure only one decimal point
-                        const parts = numericValue.split('.');
-                        const filteredValue = parts.length > 2
-                          ? parts[0] + '.' + parts.slice(1).join('')
-                          : numericValue;
-                        // Limit to 35-100
-                        if (filteredValue) {
-                          const numValue = parseFloat(filteredValue);
-                          if (numValue > 100) {
-                            return;
-                          }
-                        }
-                        setGradMarks(filteredValue);
-                        handleChange('graduation', 'marksPercent', filteredValue);
-                        setErrors(prev => {
-                          const newErrors = { ...prev };
-                          delete newErrors['graduation.marksPercent'];
-                          return newErrors;
-                        });
-                      }}
-                      onFocus={() => setFocusedField('graduation.marksPercent')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Enter percentage (35-100)"
-                      placeholderTextColor="#9ca3af"
-                      keyboardType="decimal-pad"
-                      maxLength={5}
-                    />
-                    {errors['graduation.marksPercent'] && (
-                      <Text style={styles.errorText}>{errors['graduation.marksPercent']}</Text>
-                    )}
-                  </View>
-                </View>
-              )}
-            </View>
+                )}
+              </View>
 
-            {/* Class XII Section */}
-            <View style={[styles.section, { zIndex: (xiiBoardOpen || xiiYearOpen) ? 9000 : 1 }]}>
-              <TouchableOpacity
-                style={styles.sectionHeader}
-                onPress={() => toggleSection('classXii')}>
-                <Text style={styles.sectionTitle}>Class XII Details</Text>
-                <Text style={styles.toggleIcon}>
-                  {expandedSections.classXii ? '−' : '+'}
-                </Text>
+              {/* Class X Section */}
+              <View style={[styles.section, { zIndex: (xBoardOpen || xYearOpen) ? 8000 : 1 }]}>
+                <TouchableOpacity
+                  style={styles.sectionHeader}
+                  onPress={() => toggleSection('classX')}>
+                  <Text style={styles.sectionTitle}>Class X Details</Text>
+                  <Text style={styles.toggleIcon}>
+                    {expandedSections.classX ? '−' : '+'}
+                  </Text>
+                </TouchableOpacity>
+                {expandedSections.classX && (
+                  <View style={styles.sectionContent}>
+                    <View style={[styles.inputContainer, { zIndex: xBoardOpen ? 8000 : 100 }]}>
+                      <Text style={styles.label}>Board <Text style={styles.required}>*</Text></Text>
+                      <DropDownPicker
+                        open={xBoardOpen}
+                        value={xBoard}
+                        items={boardOptions.map(opt => ({ label: opt, value: opt }))}
+                        setOpen={setXBoardOpen}
+                        onOpen={() => {
+                          closeAllDropdowns();
+                          setXBoardOpen(true);
+                          setFocusedField('classX.board');
+                        }}
+                        onClose={() => {
+                          setFocusedField(null);
+                        }}
+                        setValue={value => {
+                          setXBoard(value);
+                          setErrors(prev => ({ ...prev, 'classX.board': '' }));
+                        }}
+                        placeholder="Select Board"
+                        style={[
+                          styles.dropdown,
+                          errors['classX.board'] && styles.errorInput,
+                          focusedField === 'classX.board' && styles.inputFocused,
+                        ]}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        placeholderStyle={styles.placeholderText}
+                        textStyle={styles.dropdownText}
+                        listMode="SCROLLVIEW"
+                        zIndex={1000}
+                        searchable={false}
+                        closeAfterSelecting={true}
+                      />
+                      {errors['classX.board'] && (
+                        <Text style={styles.errorText}>{errors['classX.board']}</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputContainer, { zIndex: xYearOpen ? 7000 : 90 }]}>
+                      <Text style={styles.label}>Passing Year <Text style={styles.required}>*</Text></Text>
+                      <DropDownPicker
+                        open={xYearOpen}
+                        value={formData.classX.passingYear ? parseInt(formData.classX.passingYear) : null}
+                        items={YEARS.map(year => ({ label: year.toString(), value: year }))}
+                        setOpen={setXYearOpen}
+                        onOpen={() => {
+                          closeAllDropdowns();
+                          setXYearOpen(true);
+                          setFocusedField('classX.passingYear');
+                        }}
+                        onClose={() => {
+                          setFocusedField(null);
+                        }}
+                        setValue={(value: any) => {
+                          const yearValue = typeof value === 'function' ? value(formData.classX.passingYear ? parseInt(formData.classX.passingYear) : null) : value;
+                          handleChange('classX', 'passingYear', yearValue ? yearValue.toString() : '');
+                          setErrors(prev => {
+                            const newErrors: Record<string, string> = { ...prev };
+                            newErrors['classX.passingYear'] = '';
+                            if (yearValue) {
+                              const yearNum = parseInt(yearValue.toString(), 10);
+                              // Check against Class XII
+                              if (formData.classXii.passingYear) {
+                                const xiiYearNum = parseInt(formData.classXii.passingYear, 10);
+                                if (!isNaN(xiiYearNum) && yearNum > xiiYearNum) {
+                                  newErrors['classX.passingYear'] = 'Class X passing year must be less than or equal to Class XII passing year';
+                                } else {
+                                  // Clear Class XII error if it was about being less than Class X
+                                  if (newErrors['classXii.passingYear']?.includes('Class X')) {
+                                    delete newErrors['classXii.passingYear'];
+                                  }
+                                }
+                              }
+                              // Check against Graduation
+                              if (formData.graduation.endYear) {
+                                const gradYearNum = parseInt(formData.graduation.endYear, 10);
+                                if (!isNaN(gradYearNum) && yearNum > gradYearNum) {
+                                  newErrors['classX.passingYear'] = 'Class X passing year must be less than or equal to Graduation passing year';
+                                } else {
+                                  // Clear Graduation error if it was about being less than Class X
+                                  if (newErrors['graduation.endYear']?.includes('Class X')) {
+                                    delete newErrors['graduation.endYear'];
+                                  }
+                                }
+                              }
+                            }
+                            return newErrors;
+                          });
+                        }}
+                        placeholder="Select Passing Year"
+                        style={[
+                          styles.dropdown,
+                          errors['classX.passingYear'] && styles.errorInput,
+                          focusedField === 'classX.passingYear' && styles.inputFocused,
+                        ]}
+                        dropDownContainerStyle={styles.dropdownContainer}
+                        placeholderStyle={styles.placeholderText}
+                        textStyle={styles.dropdownText}
+                        listMode="SCROLLVIEW"
+                        zIndex={1000}
+                        searchable={false}
+                        closeAfterSelecting={true}
+                      />
+                      {errors['classX.passingYear'] && (
+                        <Text style={styles.errorText}>{errors['classX.passingYear']}</Text>
+                      )}
+                    </View>
+                    <View style={[styles.inputGroup, { zIndex: 80, position: 'relative' }]}>
+                      <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
+                      <TextInput
+                        style={[
+                          styles.input,
+                          errors['classX.marksPercent'] && styles.inputError,
+                          focusedField === 'classX.marksPercent' && styles.inputFocused,
+                        ]}
+                        value={xMarks || formData.classX.marksPercent || ''}
+                        onChangeText={value => {
+                          // Only allow numbers and one decimal point
+                          const numericValue = value.replace(/[^0-9.]/g, '');
+                          // Ensure only one decimal point
+                          const parts = numericValue.split('.');
+                          const filteredValue = parts.length > 2
+                            ? parts[0] + '.' + parts.slice(1).join('')
+                            : numericValue;
+                          // Limit to 35-100
+                          if (filteredValue) {
+                            const numValue = parseFloat(filteredValue);
+                            if (numValue > 100) {
+                              return;
+                            }
+                          }
+                          setXMarks(filteredValue);
+                          handleChange('classX', 'marksPercent', filteredValue);
+                          setErrors(prev => {
+                            const newErrors = { ...prev };
+                            delete newErrors['classX.marksPercent'];
+                            return newErrors;
+                          });
+                        }}
+                        onFocus={() => setFocusedField('classX.marksPercent')}
+                        onBlur={() => setFocusedField(null)}
+                        placeholder="Enter percentage (35-100)"
+                        placeholderTextColor="#9ca3af"
+                        keyboardType="decimal-pad"
+                        maxLength={5}
+                      />
+                      {errors['classX.marksPercent'] && (
+                        <Text style={styles.errorText}>{errors['classX.marksPercent']}</Text>
+                      )}
+                    </View>
+                  </View>
+                )}
+              </View>
+            </ScrollView>
+
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
               </TouchableOpacity>
-              {expandedSections.classXii && (
-                <View style={styles.sectionContent}>
-                  <View style={[styles.inputContainer, { zIndex: xiiBoardOpen ? 8000 : 100 }]}>
-                    <Text style={styles.label}>Board <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={xiiBoardOpen}
-                      value={xiiBoard}
-                      items={boardOptions.map(opt => ({ label: opt, value: opt }))}
-                      setOpen={setXiiBoardOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setXiiBoardOpen(true);
-                        setFocusedField('classXii.board');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={value => {
-                        setXiiBoard(value);
-                        setErrors(prev => ({ ...prev, 'classXii.board': '' }));
-                      }}
-                      placeholder="Select Board"
-                      style={[
-                        styles.dropdown,
-                        errors['classXii.board'] && styles.errorInput,
-                        focusedField === 'classXii.board' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      listMode="SCROLLVIEW"
-                      zIndex={2000}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['classXii.board'] && (
-                      <Text style={styles.errorText}>{errors['classXii.board']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputContainer, { zIndex: xiiYearOpen ? 7000 : 90 }]}>
-                    <Text style={styles.label}>Passing Year <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={xiiYearOpen}
-                      value={formData.classXii.passingYear ? parseInt(formData.classXii.passingYear) : null}
-                      items={YEARS.map(year => ({ label: year.toString(), value: year }))}
-                      setOpen={setXiiYearOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setXiiYearOpen(true);
-                        setFocusedField('classXii.passingYear');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={(value: any) => {
-                        const yearValue = typeof value === 'function' ? value(formData.classXii.passingYear ? parseInt(formData.classXii.passingYear) : null) : value;
-                        handleChange('classXii', 'passingYear', yearValue ? yearValue.toString() : '');
-                        setErrors(prev => {
-                          const newErrors: Record<string, string> = { ...prev };
-                          newErrors['classXii.passingYear'] = '';
-                          // Clear related field errors that might be affected
-                          if (yearValue) {
-                            const yearNum = parseInt(yearValue.toString(), 10);
-                            // Check against Class X
-                            if (formData.classX.passingYear) {
-                              const xYearNum = parseInt(formData.classX.passingYear, 10);
-                              if (!isNaN(xYearNum) && yearNum < xYearNum) {
-                                newErrors['classXii.passingYear'] = 'Class XII passing year must be greater than  to Class X passing year';
-                              } else {
-                                // Clear Class X error if it was about being greater than Class XII
-                                if (newErrors['classX.passingYear']?.includes('Class XII')) {
-                                  delete newErrors['classX.passingYear'];
-                                }
-                              }
-                            }
-                            // Check against Graduation
-                            if (formData.graduation.endYear) {
-                              const gradYearNum = parseInt(formData.graduation.endYear, 10);
-                              if (!isNaN(gradYearNum) && yearNum > gradYearNum) {
-                                newErrors['classXii.passingYear'] = 'Class XII passing year must be less than or equal to Graduation passing year';
-                              } else {
-                                // Clear Graduation error if it was about being less than Class XII
-                                if (newErrors['graduation.endYear']?.includes('Class XII')) {
-                                  delete newErrors['graduation.endYear'];
-                                }
-                              }
-                            }
-                          }
-                          return newErrors;
-                        });
-                      }}
-                      placeholder="Select Passing Year"
-                      style={[
-                        styles.dropdown,
-                        errors['classXii.passingYear'] && styles.errorInput,
-                        focusedField === 'classXii.passingYear' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      listMode="SCROLLVIEW"
-                      zIndex={2000}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['classXii.passingYear'] && (
-                      <Text style={styles.errorText}>{errors['classXii.passingYear']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputGroup, { zIndex: 80, position: 'relative' }]}>
-                    <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        errors['classXii.marksPercent'] && styles.inputError,
-                        focusedField === 'classXii.marksPercent' && styles.inputFocused,
-                      ]}
-                      value={xiiMarks || formData.classXii.marksPercent || ''}
-                      onChangeText={value => {
-                        // Only allow numbers and one decimal point
-                        const numericValue = value.replace(/[^0-9.]/g, '');
-                        // Ensure only one decimal point
-                        const parts = numericValue.split('.');
-                        const filteredValue = parts.length > 2
-                          ? parts[0] + '.' + parts.slice(1).join('')
-                          : numericValue;
-                        // Limit to 35-100
-                        if (filteredValue) {
-                          const numValue = parseFloat(filteredValue);
-                          if (numValue > 100) {
-                            return;
-                          }
-                        }
-                        setXiiMarks(filteredValue);
-                        handleChange('classXii', 'marksPercent', filteredValue);
-                        setErrors(prev => {
-                          const newErrors = { ...prev };
-                          delete newErrors['classXii.marksPercent'];
-                          return newErrors;
-                        });
-                      }}
-                      onFocus={() => setFocusedField('classXii.marksPercent')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Enter percentage (35-100)"
-                      placeholderTextColor="#9ca3af"
-                      keyboardType="decimal-pad"
-                      maxLength={5}
-                    />
-                    {errors['classXii.marksPercent'] && (
-                      <Text style={styles.errorText}>{errors['classXii.marksPercent']}</Text>
-                    )}
-                  </View>
-                </View>
-              )}
-            </View>
-
-            {/* Class X Section */}
-            <View style={[styles.section, { zIndex: (xBoardOpen || xYearOpen) ? 8000 : 1 }]}>
               <TouchableOpacity
-                style={styles.sectionHeader}
-                onPress={() => toggleSection('classX')}>
-                <Text style={styles.sectionTitle}>Class X Details</Text>
-                <Text style={styles.toggleIcon}>
-                  {expandedSections.classX ? '−' : '+'}
-                </Text>
+                style={[styles.saveButton, loading && styles.saveButtonDisabled]}
+                onPress={handleSave}
+                disabled={loading}>
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
               </TouchableOpacity>
-              {expandedSections.classX && (
-                <View style={styles.sectionContent}>
-                  <View style={[styles.inputContainer, { zIndex: xBoardOpen ? 8000 : 100 }]}>
-                    <Text style={styles.label}>Board <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={xBoardOpen}
-                      value={xBoard}
-                      items={boardOptions.map(opt => ({ label: opt, value: opt }))}
-                      setOpen={setXBoardOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setXBoardOpen(true);
-                        setFocusedField('classX.board');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={value => {
-                        setXBoard(value);
-                        setErrors(prev => ({ ...prev, 'classX.board': '' }));
-                      }}
-                      placeholder="Select Board"
-                      style={[
-                        styles.dropdown,
-                        errors['classX.board'] && styles.errorInput,
-                        focusedField === 'classX.board' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      listMode="SCROLLVIEW"
-                      zIndex={1000}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['classX.board'] && (
-                      <Text style={styles.errorText}>{errors['classX.board']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputContainer, { zIndex: xYearOpen ? 7000 : 90 }]}>
-                    <Text style={styles.label}>Passing Year <Text style={styles.required}>*</Text></Text>
-                    <DropDownPicker
-                      open={xYearOpen}
-                      value={formData.classX.passingYear ? parseInt(formData.classX.passingYear) : null}
-                      items={YEARS.map(year => ({ label: year.toString(), value: year }))}
-                      setOpen={setXYearOpen}
-                      onOpen={() => {
-                        closeAllDropdowns();
-                        setXYearOpen(true);
-                        setFocusedField('classX.passingYear');
-                      }}
-                      onClose={() => {
-                        setFocusedField(null);
-                      }}
-                      setValue={(value: any) => {
-                        const yearValue = typeof value === 'function' ? value(formData.classX.passingYear ? parseInt(formData.classX.passingYear) : null) : value;
-                        handleChange('classX', 'passingYear', yearValue ? yearValue.toString() : '');
-                        setErrors(prev => {
-                          const newErrors: Record<string, string> = { ...prev };
-                          newErrors['classX.passingYear'] = '';
-                          if (yearValue) {
-                            const yearNum = parseInt(yearValue.toString(), 10);
-                            // Check against Class XII
-                            if (formData.classXii.passingYear) {
-                              const xiiYearNum = parseInt(formData.classXii.passingYear, 10);
-                              if (!isNaN(xiiYearNum) && yearNum > xiiYearNum) {
-                                newErrors['classX.passingYear'] = 'Class X passing year must be less than or equal to Class XII passing year';
-                              } else {
-                                // Clear Class XII error if it was about being less than Class X
-                                if (newErrors['classXii.passingYear']?.includes('Class X')) {
-                                  delete newErrors['classXii.passingYear'];
-                                }
-                              }
-                            }
-                            // Check against Graduation
-                            if (formData.graduation.endYear) {
-                              const gradYearNum = parseInt(formData.graduation.endYear, 10);
-                              if (!isNaN(gradYearNum) && yearNum > gradYearNum) {
-                                newErrors['classX.passingYear'] = 'Class X passing year must be less than or equal to Graduation passing year';
-                              } else {
-                                // Clear Graduation error if it was about being less than Class X
-                                if (newErrors['graduation.endYear']?.includes('Class X')) {
-                                  delete newErrors['graduation.endYear'];
-                                }
-                              }
-                            }
-                          }
-                          return newErrors;
-                        });
-                      }}
-                      placeholder="Select Passing Year"
-                      style={[
-                        styles.dropdown,
-                        errors['classX.passingYear'] && styles.errorInput,
-                        focusedField === 'classX.passingYear' && styles.inputFocused,
-                      ]}
-                      dropDownContainerStyle={styles.dropdownContainer}
-                      placeholderStyle={styles.placeholderText}
-                      textStyle={styles.dropdownText}
-                      listMode="SCROLLVIEW"
-                      zIndex={1000}
-                      searchable={false}
-                      closeAfterSelecting={true}
-                    />
-                    {errors['classX.passingYear'] && (
-                      <Text style={styles.errorText}>{errors['classX.passingYear']}</Text>
-                    )}
-                  </View>
-                  <View style={[styles.inputGroup, { zIndex: 80, position: 'relative' }]}>
-                    <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
-                    <TextInput
-                      style={[
-                        styles.input,
-                        errors['classX.marksPercent'] && styles.inputError,
-                        focusedField === 'classX.marksPercent' && styles.inputFocused,
-                      ]}
-                      value={xMarks || formData.classX.marksPercent || ''}
-                      onChangeText={value => {
-                        // Only allow numbers and one decimal point
-                        const numericValue = value.replace(/[^0-9.]/g, '');
-                        // Ensure only one decimal point
-                        const parts = numericValue.split('.');
-                        const filteredValue = parts.length > 2
-                          ? parts[0] + '.' + parts.slice(1).join('')
-                          : numericValue;
-                        // Limit to 35-100
-                        if (filteredValue) {
-                          const numValue = parseFloat(filteredValue);
-                          if (numValue > 100) {
-                            return;
-                          }
-                        }
-                        setXMarks(filteredValue);
-                        handleChange('classX', 'marksPercent', filteredValue);
-                        setErrors(prev => {
-                          const newErrors = { ...prev };
-                          delete newErrors['classX.marksPercent'];
-                          return newErrors;
-                        });
-                      }}
-                      onFocus={() => setFocusedField('classX.marksPercent')}
-                      onBlur={() => setFocusedField(null)}
-                      placeholder="Enter percentage (35-100)"
-                      placeholderTextColor="#9ca3af"
-                      keyboardType="decimal-pad"
-                      maxLength={5}
-                    />
-                    {errors['classX.marksPercent'] && (
-                      <Text style={styles.errorText}>{errors['classX.marksPercent']}</Text>
-                    )}
-                  </View>
-                </View>
-              )}
             </View>
-          </ScrollView>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.saveButton, loading && styles.saveButtonDisabled]}
-              onPress={handleSave}
-              disabled={loading}>
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.saveButtonText}>Save</Text>
-              )}
-            </TouchableOpacity>
           </View>
+          <Toast config={toastConfig} />
         </View>
-        <Toast config={toastConfig} />
-      </View>
       </KeyboardAvoidingView>
     </Modal>
   );

@@ -205,14 +205,53 @@ export const ProfileService = {
       if (!userToken || !userId) {
         throw new Error('Authentication data is missing or incomplete.');
       }
-      const response = await apiClient.get(`/applicant-image/getphoto/${userId}`, {
+      const response = await apiClient.get(`/applicant-image/getphoto/${userId}?t=${Date.now()}`, {
         responseType: 'arraybuffer',
         // Ensure the response is handled as an arraybuffer
       });
-      const base64Image = btoa(
-        new Uint8Array(response.data).reduce((data, byte) => data + String.fromCharCode(byte), ''),
-      );
-      const photoUrl = `data:${response.headers['content-type']};base64,${base64Image}`;
+      
+      const uint8 = new Uint8Array(response.data);
+
+      // Check if it starts with '{' (indicates JSON response instead of binary image data)
+      if (uint8.length > 0 && uint8[0] === 123) { // 123 is '{'
+        try {
+          let str = '';
+          for (let i = 0; i < uint8.length; i++) {
+            str += String.fromCharCode(uint8[i]);
+          }
+          const json = JSON.parse(str);
+          console.log('[ProfileService] getphoto returned JSON:', json);
+          return {
+            success: false,
+            message: json.message || 'No photo found.',
+          };
+        } catch (e) {
+          // Fallback to base64 conversion if parsing fails
+        }
+      }
+      
+      // Pure JS base64 encoder for Uint8Array to replace browser-only btoa
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+      let base64Image = '';
+      const len = uint8.length;
+      for (let i = 0; i < len; i += 3) {
+        const b1 = uint8[i];
+        const b2 = i + 1 < len ? uint8[i + 1] : NaN;
+        const b3 = i + 2 < len ? uint8[i + 2] : NaN;
+
+        const enc1 = b1 >> 2;
+        const enc2 = ((b1 & 3) << 4) | (isNaN(b2) ? 0 : b2 >> 4);
+        const enc3 = isNaN(b2) ? 64 : ((b2 & 15) << 2) | (isNaN(b3) ? 0 : b3 >> 6);
+        const enc4 = isNaN(b3) ? 64 : b3 & 63;
+
+        base64Image += chars.charAt(enc1) +
+                       chars.charAt(enc2) +
+                       (enc3 === 64 ? '=' : chars.charAt(enc3)) +
+                       (enc4 === 64 ? '=' : chars.charAt(enc4));
+      }
+
+      const contentType = response.headers['content-type'] || response.headers['Content-Type'] || 'image/jpeg';
+      const photoUrl = `data:${contentType};base64,${base64Image}`;
       return {success: true, photoUrl};
     } catch (error) {
       if (axios.isAxiosError(error)) {
