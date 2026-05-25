@@ -8,6 +8,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   ScrollView,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -747,8 +749,13 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+        style={{ flex: 1 }}
+      >
+        <View style={styles.overlay}>
+          <View style={styles.modalContent}>
           <View style={styles.header}>
             <Text style={styles.title}>Edit Education Details</Text>
             <TouchableOpacity onPress={onClose}>
@@ -761,9 +768,10 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
             nestedScrollEnabled={true}
+            automaticallyAdjustKeyboardInsets={true}
           >
             {/* Graduation Section */}
-            <View style={[styles.section]}>
+            <View style={[styles.section, { zIndex: (degreeOpen || specializationOpen || courseTypeOpen || startYearOpen || endYearOpen) ? 10000 : 1 }]}>
               <TouchableOpacity
                 style={styles.sectionHeader}
                 onPress={() => toggleSection('graduation')}>
@@ -774,7 +782,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
               </TouchableOpacity>
               {expandedSections.graduation && (
                 <View style={styles.sectionContent}>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: degreeOpen ? 9000 : 100 }]}>
                     <Text style={styles.label}>Degree <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={degreeOpen}
@@ -811,7 +819,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['graduation.degree']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputGroup}>
+                  <View style={[styles.inputGroup, { zIndex: 90, position: 'relative' }]}>
                     <Text style={styles.label}>University/Institute <Text style={styles.required}>*</Text></Text>
                     <TextInput
                       style={[
@@ -842,7 +850,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['graduation.university']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: specializationOpen ? 8000 : 80 }]}>
                     <Text style={styles.label}>Specialization <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={specializationOpen}
@@ -887,7 +895,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.hintText}>Please select a degree first</Text>
                     )}
                   </View>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: courseTypeOpen ? 7000 : 70 }]}>
                     <Text style={styles.label}>Course Type <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={courseTypeOpen}
@@ -924,8 +932,8 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['graduation.courseType']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputRow}>
-                    <View style={[styles.inputContainer, { flex: 1 }]}>
+                  <View style={[styles.inputRow, { zIndex: (startYearOpen || endYearOpen) ? 6000 : 60, position: 'relative' }]}>
+                    <View style={[styles.inputContainer, { flex: 1, zIndex: startYearOpen ? 6000 : 60 }]}>
                       <Text style={styles.label}>Start Year <Text style={styles.required}>*</Text></Text>
                       <DropDownPicker
                         open={startYearOpen}
@@ -994,7 +1002,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                         <Text style={styles.errorText}>{errors['graduation.startYear']}</Text>
                       )}
                     </View>
-                    <View style={[styles.inputContainer, { flex: 1 }]}>
+                    <View style={[styles.inputContainer, { flex: 1, zIndex: endYearOpen ? 6000 : 60 }]}>
                       <Text style={styles.label}>End Year <Text style={styles.required}>*</Text></Text>
                       <DropDownPicker
                         open={endYearOpen}
@@ -1075,7 +1083,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       )}
                     </View>
                   </View>
-                  <View style={styles.inputGroup}>
+                  <View style={[styles.inputGroup, { zIndex: 50, position: 'relative' }]}>
                     <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
                     <TextInput
                       style={[
@@ -1123,7 +1131,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
             </View>
 
             {/* Class XII Section */}
-            <View style={[styles.section]}>
+            <View style={[styles.section, { zIndex: (xiiBoardOpen || xiiYearOpen) ? 9000 : 1 }]}>
               <TouchableOpacity
                 style={styles.sectionHeader}
                 onPress={() => toggleSection('classXii')}>
@@ -1134,7 +1142,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
               </TouchableOpacity>
               {expandedSections.classXii && (
                 <View style={styles.sectionContent}>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: xiiBoardOpen ? 8000 : 100 }]}>
                     <Text style={styles.label}>Board <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={xiiBoardOpen}
@@ -1171,7 +1179,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['classXii.board']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: xiiYearOpen ? 7000 : 90 }]}>
                     <Text style={styles.label}>Passing Year <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={xiiYearOpen}
@@ -1241,7 +1249,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['classXii.passingYear']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputGroup}>
+                  <View style={[styles.inputGroup, { zIndex: 80, position: 'relative' }]}>
                     <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
                     <TextInput
                       style={[
@@ -1289,7 +1297,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
             </View>
 
             {/* Class X Section */}
-            <View style={[styles.section]}>
+            <View style={[styles.section, { zIndex: (xBoardOpen || xYearOpen) ? 8000 : 1 }]}>
               <TouchableOpacity
                 style={styles.sectionHeader}
                 onPress={() => toggleSection('classX')}>
@@ -1300,7 +1308,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
               </TouchableOpacity>
               {expandedSections.classX && (
                 <View style={styles.sectionContent}>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: xBoardOpen ? 8000 : 100 }]}>
                     <Text style={styles.label}>Board <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={xBoardOpen}
@@ -1337,7 +1345,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['classX.board']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputContainer}>
+                  <View style={[styles.inputContainer, { zIndex: xYearOpen ? 7000 : 90 }]}>
                     <Text style={styles.label}>Passing Year <Text style={styles.required}>*</Text></Text>
                     <DropDownPicker
                       open={xYearOpen}
@@ -1406,7 +1414,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
                       <Text style={styles.errorText}>{errors['classX.passingYear']}</Text>
                     )}
                   </View>
-                  <View style={styles.inputGroup}>
+                  <View style={[styles.inputGroup, { zIndex: 80, position: 'relative' }]}>
                     <Text style={styles.label}>Percentage <Text style={styles.required}>*</Text></Text>
                     <TextInput
                       style={[
@@ -1472,6 +1480,7 @@ const EditEducationModal: React.FC<EditEducationModalProps> = ({
         </View>
         <Toast config={toastConfig} />
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -1491,7 +1500,8 @@ const styles = StyleSheet.create({
     width: '100%',
     maxWidth: 500,
     maxHeight: '90%',
-    overflow: 'visible', // Critical: allows dropdowns to render outside modal
+    overflow: 'hidden',
+    flexShrink: 1,
   },
   header: {
     flexDirection: 'row',
@@ -1506,7 +1516,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     maxHeight: 500,
-    overflow: 'hidden', // Keep dropdowns inside ScrollView
+    flexShrink: 1,
   },
   section: {
     marginBottom: 16,
@@ -1514,7 +1524,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#E5E5E5',
     borderRadius: 8,
-    overflow: "hidden", // Keep dropdowns inside section
+    overflow: "visible", // Keep dropdowns inside section
   },
   sectionExpandedinitialCard: {
     paddingBottom: 76,
@@ -1528,6 +1538,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     backgroundColor: '#F7F7F7',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
   },
   sectionTitle: {
     fontSize: 16,

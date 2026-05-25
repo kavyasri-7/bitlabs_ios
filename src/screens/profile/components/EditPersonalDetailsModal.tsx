@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   ScrollView,
   Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -25,6 +26,42 @@ interface EditPersonalDetailsModalProps {
   userToken: string;
   initialData: any;
 }
+
+const VALID_LANGUAGES = [
+  // Common World Languages
+  'english', 'spanish', 'french', 'german', 'italian', 'portuguese', 'russian', 
+  'chinese', 'mandarin', 'cantonese', 'japanese', 'korean', 'arabic', 'turkish', 
+  'vietnamese', 'thai', 'indonesian', 'malay', 'filipino', 'tagalog', 'polish', 
+  'dutch', 'swedish', 'norwegian', 'danish', 'finnish', 'czech', 'greek', 
+  'hebrew', 'persian', 'farsi', 'ukrainian', 'romanian', 'hungarian', 'hindi', 
+  'bengali', 'punjabi', 'telugu', 'marathi', 'tamil', 'urdu', 'gujarati', 
+  'kannada', 'odia', 'oriya', 'malayalam', 'assamese', 'maithili', 'sanskrit', 
+  'santali', 'kashmiri', 'nepali', 'konkani', 'sindhi', 'dogri', 'manipuri', 
+  'bodo', 'tulu', 'marwari', 'rajasthani', 'bhojpuri', 'chhattisgarhi', 'haryanvi',
+  'magahi', 'awadhi', 'angika', 'garhwali', 'kumaoni', 'khasi', 'garo', 'mizo', 
+  'lepcha', 'bhutia', 'limbu', 'sherpa', 'sinhala', 'dhivehi', 'tibetan', 
+  'pashto', 'kurdish', 'armenian', 'georgian', 'azerbaijani', 'uzbek', 'kazakh', 
+  'tajik', 'turkmen', 'kyrgyz', 'mongolian', 'swahili', 'zulu', 'xhosa', 
+  'afrikaans', 'amharic', 'somali', 'yoruba', 'igbo', 'oromo', 'hausa', 'shona', 
+  'malagasy', 'bambara', 'wolof', 'esperanto', 'latin', 'gaelic', 'irish', 
+  'welsh', 'breton', 'basque', 'catalan', 'galician'
+];
+
+const isLanguageValid = (lang: string): boolean => {
+  const cleaned = lang.trim().toLowerCase().replace(/[^a-zA-Z\s]/g, '');
+  if (!cleaned) return false;
+  
+  if (VALID_LANGUAGES.includes(cleaned)) return true;
+  
+  const words = cleaned.split(/\s+/);
+  for (const word of words) {
+    if (word.length >= 3 && VALID_LANGUAGES.includes(word)) {
+      return true;
+    }
+  }
+  
+  return false;
+};
 
 const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
   visible,
@@ -154,11 +191,11 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
         if (!trimmed) {
           return 'PIN code is required';
         } else if (trimmed.length !== 6) {
-          return 'PIN code must be 6 digits';
-        } else if (trimmed === '000000') {
-          return 'PIN code cannot be 000000';
+          return 'PIN code must be exactly 6 digits';
         } else if (!/^\d{6}$/.test(trimmed)) {
           return 'PIN code must contain only digits';
+        } else if (trimmed.startsWith('0')) {
+          return 'PIN code cannot start with 0';
         }
         return '';
       }
@@ -260,9 +297,9 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
           today.setHours(0, 0, 0, 0);
           date.setHours(0, 0, 0, 0);
           
-          // Validate year must be greater than 1990
-          if (y <= 1990) {
-            newErrors.dateOfBirth = 'Year of birth must be greater than 1990';
+          // Validate year must be greater than 1900
+          if (y <= 1900) {
+            newErrors.dateOfBirth = 'Year of birth must be greater than 1900';
           } else if (date > today) {
             newErrors.dateOfBirth = 'Date of birth cannot be in the future';
           } else {
@@ -287,12 +324,15 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
     }
     
     // Pincode - Required
-    if (!formData.pincode.trim()) {
+    const trimmedPincode = formData.pincode.trim();
+    if (!trimmedPincode) {
       newErrors.pincode = 'PIN code is required';
-    } else if (formData.pincode.length !== 6) {
-      newErrors.pincode = 'PIN code must be 6 digits';
-    } else if (formData.pincode === '000000') {
-      newErrors.pincode = 'PIN code cannot be 000000';
+    } else if (trimmedPincode.length !== 6) {
+      newErrors.pincode = 'PIN code must be exactly 6 digits';
+    } else if (!/^\d{6}$/.test(trimmedPincode)) {
+      newErrors.pincode = 'PIN code must contain only digits';
+    } else if (trimmedPincode.startsWith('0')) {
+      newErrors.pincode = 'PIN code cannot start with 0';
     }
     
     // Address - Required, min 3 characters
@@ -349,9 +389,9 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
       return;
     }
     
-    // Validate year - must be greater than 1990
-    if (isNaN(y) || y <= 1990) {
-      const errorMsg = 'Year of birth must be greater than 1990';
+    // Validate year - must be greater than 1900
+    if (isNaN(y) || y <= 1900) {
+      const errorMsg = 'Year of birth must be greater than 1900';
       showToast('error', errorMsg);
       setErrors({...errors, dateOfBirth: errorMsg});
       return;
@@ -584,62 +624,67 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
   return (
     <>
       <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Edit Personal Details</Text>
-            <TouchableOpacity onPress={onClose}>
-              <MaterialIcons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-            <View style={styles.form}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Full Name <Text style={styles.required}>*</Text></Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.fullName && styles.inputError,
-                    focusedField === 'fullName' && styles.inputFocused,
-                  ]}
-                  value={formData.fullName}
-                  onChangeText={value => handleChange('fullName', value)}
-                  onFocus={() => setFocusedField('fullName')}
-                  onBlur={() => setFocusedField(null)}
-                  placeholder="Enter full name"
-                  placeholderTextColor="#9ca3af"
-                />
-                {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          style={{ flex: 1 }}
+        >
+          <View style={styles.overlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.header}>
+                <Text style={styles.title}>Edit Personal Details</Text>
+                <TouchableOpacity onPress={onClose}>
+                  <MaterialIcons name="close" size={24} color="#333" />
+                </TouchableOpacity>
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Gender <Text style={styles.required}>*</Text></Text>
-                <DropDownPicker
-                  open={genderOpen}
-                  value={formData.gender}
-                  items={[
-                    {label: 'Male', value: 'Male'},
-                    {label: 'Female', value: 'Female'},
-                    {label: 'Other', value: 'Other'},
-                  ]}
-                  setOpen={setGenderOpen}
-                  setValue={value => {
-                    const genderValue = typeof value === 'function' ? value(formData.gender) : value;
-                    handleChange('gender', genderValue || '');
-                    setErrors({...errors, gender: ''});
-                  }}
-                  placeholder="Select Gender"
-                  style={[styles.dropdown, errors.gender && styles.inputError]}
-                  dropDownContainerStyle={styles.dropdownContainer}
-                  placeholderStyle={styles.placeholderText}
-                  textStyle={styles.dropdownText}
-                  listMode="SCROLLVIEW"
-                  zIndex={3000}
-                  zIndexInverse={1000}
-                />
-                {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
-              </View>
+              <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled" automaticallyAdjustKeyboardInsets={true}>
+                <View style={styles.form}>
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Full Name <Text style={styles.required}>*</Text></Text>
+                    <TextInput
+                      style={[
+                        styles.input,
+                        errors.fullName && styles.inputError,
+                        focusedField === 'fullName' && styles.inputFocused,
+                      ]}
+                      value={formData.fullName}
+                      onChangeText={value => handleChange('fullName', value)}
+                      onFocus={() => setFocusedField('fullName')}
+                      onBlur={() => setFocusedField(null)}
+                      placeholder="Enter full name"
+                      placeholderTextColor="#9ca3af"
+                    />
+                    {errors.fullName && <Text style={styles.errorText}>{errors.fullName}</Text>}
+                  </View>
+
+                  <View style={[styles.inputGroup, { zIndex: genderOpen ? 5000 : 1 }]}>
+                    <Text style={styles.label}>Gender <Text style={styles.required}>*</Text></Text>
+                    <DropDownPicker
+                      open={genderOpen}
+                      value={formData.gender}
+                      items={[
+                        {label: 'Male', value: 'Male'},
+                        {label: 'Female', value: 'Female'},
+                        {label: 'Other', value: 'Other'},
+                      ]}
+                      setOpen={setGenderOpen}
+                      setValue={value => {
+                        const genderValue = typeof value === 'function' ? value(formData.gender) : value;
+                        handleChange('gender', genderValue || '');
+                        setErrors({...errors, gender: ''});
+                      }}
+                      placeholder="Select Gender"
+                      style={[styles.dropdown, errors.gender && styles.inputError]}
+                      dropDownContainerStyle={styles.dropdownContainer}
+                      placeholderStyle={styles.placeholderText}
+                      textStyle={styles.dropdownText}
+                      listMode="SCROLLVIEW"
+                      zIndex={3000}
+                      zIndexInverse={1000}
+                    />
+                    {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
+                  </View>
 
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Email <Text style={styles.required}>*</Text></Text>
@@ -682,19 +727,22 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
                 {errors.phone && <Text style={styles.errorText}>{errors.phone}</Text>}
               </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Date of Birth <Text style={styles.required}>*</Text></Text>
-                <TouchableOpacity
-                  style={[
-                    styles.input,
-                    styles.dateInputContainer,
-                    errors.dateOfBirth && styles.inputError,
-                    focusedField === 'dateOfBirth' && styles.inputFocused,
-                  ]}
-                  onPress={() => {
-                    setFocusedField('dateOfBirth');
-                    setShowDatePicker(true);
-                  }}>
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>Date of Birth <Text style={styles.required}>*</Text></Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.input,
+                        styles.dateInputContainer,
+                        errors.dateOfBirth && styles.inputError,
+                        focusedField === 'dateOfBirth' && styles.inputFocused,
+                      ]}
+                      onPress={() => {
+                        setFocusedField('dateOfBirth');
+                        if (formData.dateOfBirth) {
+                          populateDateFields(formData.dateOfBirth);
+                        }
+                        setShowDatePicker(true);
+                      }}>
                   <Text style={[styles.dateText, !formData.dateOfBirth && styles.placeholderText, styles.dateTextFlex]}>
                     {formData.dateOfBirth 
                       ? (() => {
@@ -802,6 +850,10 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
                             showToast('error', 'Each language must be at least 3 characters');
                             return;
                           }
+                          if (!isLanguageValid(trimmed)) {
+                            showToast('error', 'Please enter a valid, existing language');
+                            return;
+                          }
                           if (!formData.knownLanguages.includes(trimmed)) {
                             setFormData({
                               ...formData,
@@ -823,6 +875,10 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
                           const trimmed = newLanguage.trim();
                           if (trimmed.length < 3) {
                             showToast('error', 'Each language must be at least 3 characters');
+                            return;
+                          }
+                          if (!isLanguageValid(trimmed)) {
+                            showToast('error', 'Please enter a valid, existing language');
                             return;
                           }
                           if (!formData.knownLanguages.includes(trimmed)) {
@@ -878,27 +934,21 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
           </View>
         </View>
         <Toast config={toastConfig} />
-      </View>
-      </Modal>
-
-      {/* Date Picker Modal */}
-      <Modal
-        visible={showDatePicker}
-        transparent
-        animationType="slide"
-        onRequestClose={() => setShowDatePicker(false)}>
-        <View style={styles.datePickerOverlay}>
-          <Toast config={toastConfig} />
-          <View style={styles.datePickerContent}>
-            <View style={styles.datePickerHeader}>
-              <Text style={styles.datePickerTitle}>Select Date of Birth</Text>
-              <TouchableOpacity onPress={() => {
-                setShowDatePicker(false);
-                setFocusedField(null);
-              }}>
-                <MaterialIcons name="close" size={24} color="#333" />
-              </TouchableOpacity>
-            </View>
+        
+        {/* Date Picker Overlay - Absolute container instead of nested Modal */}
+        {showDatePicker && (
+          <View style={styles.inlineDatePickerOverlay}>
+            <Toast config={toastConfig} />
+            <View style={styles.datePickerContent}>
+              <View style={styles.datePickerHeader}>
+                <Text style={styles.datePickerTitle}>Select Date of Birth</Text>
+                <TouchableOpacity onPress={() => {
+                  setShowDatePicker(false);
+                  setFocusedField(null);
+                }}>
+                  <MaterialIcons name="close" size={24} color="#333" />
+                </TouchableOpacity>
+              </View>
 
             <View style={styles.dateInputRow}>
               <View style={styles.dateInputGroup}>
@@ -1058,6 +1108,9 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
             </View>
           </View>
         </View>
+        )}
+      </View>
+        </KeyboardAvoidingView>
       </Modal>
     </>
   );
@@ -1079,6 +1132,7 @@ const styles = StyleSheet.create({
     maxWidth: 500,
     maxHeight: '90%',
     overflow: 'hidden',
+    flexShrink: 1,
   },
   header: {
     flexDirection: 'row',
@@ -1093,7 +1147,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     maxHeight: 500,
-    flexGrow: 0,
+    flexShrink: 1,
   },
   form: {
     gap: 16,
@@ -1228,6 +1282,18 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
+  },
+  inlineDatePickerOverlay: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    zIndex: 9999,
   },
   datePickerContent: {
     backgroundColor: '#fff',

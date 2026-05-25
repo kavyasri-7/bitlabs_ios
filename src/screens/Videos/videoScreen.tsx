@@ -21,6 +21,7 @@ import {
   FlatList,
   StyleSheet,
   SafeAreaView,
+  Platform,
 } from "react-native";
 
 import Video from "react-native-video";
@@ -453,37 +454,49 @@ const VerifiedVideosScreen: React.FC<{
               }}
             >
               {videoSource && (
-                <Video
-                  ref={videoRef}
-                  source={videoSource}
+                <Pressable
                   style={{ flex: 1 }}
-                  resizeMode="contain"
-                  paused={paused}
-                  muted={muted}
-                  controls={true}
-                  progressUpdateInterval={
-                    PROGRESS_UPDATE_INTERVAL
-                  }
-                  onLoad={(d) => {
-                    setDuration(d.duration);
-                  }}
-                  onProgress={(x: any) => {
-                    handleProgress(x);
+                  onPress={() => setPaused(!paused)}
+                >
+                  <Video
+                    ref={videoRef}
+                    source={videoSource}
+                    style={{ flex: 1 }}
+                    resizeMode="contain"
+                    paused={paused}
+                    muted={muted}
+                    controls={false}
+                    progressUpdateInterval={
+                      PROGRESS_UPDATE_INTERVAL
+                    }
+                    onLoad={(d) => {
+                      setDuration(d.duration);
+                    }}
+                    onProgress={(x: any) => {
+                      handleProgress(x);
 
-                    if (isSeekingRef.current) return;
+                      if (isSeekingRef.current) return;
 
-                    const time = Math.max(
-                      0,
-                      x.currentTime || 0
-                    );
+                      const time = Math.max(
+                        0,
+                        x.currentTime || 0
+                      );
 
-                    setCurrentTime(time);
+                      setCurrentTime(time);
 
-                    setProgress(time);
+                      setProgress(time);
 
-                    currentTimeRef.current = time;
-                  }}
-                />
+                      currentTimeRef.current = time;
+                    }}
+                  />
+                  {paused && (
+                    <View style={{ position: "absolute", top: 0, bottom: 0, left: 0, right: 0, justifyContent: "center", alignItems: "center" }}>
+                      <View style={{ backgroundColor: "rgba(0,0,0,0.5)", borderRadius: 40, padding: 12 }}>
+                        <Icon name="play-arrow" size={48} color="#fff" />
+                      </View>
+                    </View>
+                  )}
+                </Pressable>
               )}
 
               <View style={styles.fsControls}>
