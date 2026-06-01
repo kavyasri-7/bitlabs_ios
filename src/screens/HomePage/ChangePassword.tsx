@@ -110,104 +110,100 @@ const ChangePasswordScreen = () => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>                            
-    {/* changed */}
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, paddingBottom:15}}>
-
+    <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}>
         <View style={styles.container}>
-
-
           <Navbar title="Change Password" onBackPress={() => navigation.goBack()} />
 
+          <ScrollView
+            style={{ flex: 1 }}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
+            {renderPasswordField(
+              oldPassword,
+              setOldPassword,
+              'old',
+              'Old Password *',
+              showOldPassword,
+              setShowOldPassword,
+            )}
+            {oldMessage ? (
+              <Text
+                style={[
+                  styles.message,
+                  oldMessage === 'Password changed successfully'
+                    ? styles.successMessage
+                    : styles.errorMessage,
+                ]}>
+                {oldMessage}
+              </Text>
+            ) : null}
 
+            {renderPasswordField(
+              newPassword,
+              setNewPassword,
+              'new',
+              'New Password *',
+              showNewPassword,
+              setShowNewPassword,
+            )}
+            {newMessage ? (
+              <Text
+                style={[
+                  styles.message,
+                  newMessage === 'Password changed successfully'
+                    ? styles.successMessage
+                    : styles.errorMessage,
+                ]}>
+                {newMessage}
+              </Text>
+            ) : null}
 
-          {renderPasswordField(
-            oldPassword,
-            setOldPassword,
-            'old',
-            // changed
-            'Old Password *',
+            {renderPasswordField(
+              reEnterPassword,
+              setReEnterPassword,
+              'reEnter',
+              'Confirm Password *',
+              showReEnterPassword,
+              setShowReEnterPassword,
+            )}
+            {reEnterMessage ? (
+              <Text
+                style={[
+                  styles.message,
+                  reEnterMessage === 'Password changed successfully'
+                    ? styles.successMessage
+                    : styles.errorMessage,
+                ]}>
+                {reEnterMessage}
+              </Text>
+            ) : null}
 
-            showOldPassword,
-            setShowOldPassword,
-          )}
-          {oldMessage ? (
-            <Text
-              style={[
-                styles.message,
-                oldMessage === 'Password changed successfully'
-                  ? styles.successMessage
-                  : styles.errorMessage,
-              ]}>
-              {oldMessage}
-            </Text>
-          ) : null}
+            {message ? (
+              <Text
+                style={[
+                  styles.message,
+                  message === 'Password changed successfully'
+                    ? styles.successMessage
+                    : styles.errorMessage,
+                ]}>
+                {message}
+              </Text>
+            ) : null}
 
-
-          {renderPasswordField(
-            newPassword,
-            setNewPassword,
-            'new',
-            // changed
-            'New Password *',
-
-            showNewPassword,
-            setShowNewPassword,
-          )}
-          {newMessage ? (
-            <Text
-              style={[
-                styles.message,
-                newMessage === 'Password changed successfully'
-                  ? styles.successMessage
-                  : styles.errorMessage,
-              ]}>
-              {newMessage}
-            </Text>
-          ) : null}
-
-          {renderPasswordField(
-            reEnterPassword,
-            setReEnterPassword,
-            'reEnter',
-            // changed
-            'Confirm Password *',
-
-            showReEnterPassword,
-            setShowReEnterPassword,
-          )}
-          {reEnterMessage ? (
-            <Text
-              style={[
-                styles.message,
-                reEnterMessage === 'Password changed successfully'
-                  ? styles.successMessage
-                  : styles.errorMessage,
-              ]}>
-              {reEnterMessage}
-            </Text>
-          ) : null}
-
-          {message ? (
-            <Text
-              style={[
-                styles.message,
-                message === 'Password changed successfully'
-                  ? styles.successMessage
-                  : styles.errorMessage,
-              ]}>
-              {message}
-            </Text>
-          ) : null}
-
-          <ActionButtons
-            onPressAction={handleSavePassword}
-            actionTitle="Save"
-            onPressBack={handleBackButton} // Since the back button is needed here
-          />
-
+            <ActionButtons
+              onPressAction={handleSavePassword}
+              actionTitle="Save"
+              onPressBack={handleBackButton}
+              style={styles.actionButtons}
+            />
+          </ScrollView>
         </View>
-
       </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
@@ -218,6 +214,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 2,
     backgroundColor: '#FFFFFF',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 40,
+  },
+  actionButtons: {
+    position: 'relative',
+    bottom: 0,
+    marginTop: 40,
+    width: '100%',
+    paddingHorizontal: 15,
   },
   header: {
     marginTop: 20,

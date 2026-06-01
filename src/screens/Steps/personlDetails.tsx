@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, TextInput, Image, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, TextInput, Image, StyleSheet, ScrollView, KeyboardAvoidingView, Platform} from 'react-native';
 import ProgressBar from '@components/progessBar/ProgressBar';
 import GradientButton from '@components/styles/GradientButton';
 import {getMobileNumber} from '@services/mobile';
@@ -113,8 +113,16 @@ const handleNext = () => {
   
 
   return (
-    <View style={styles.screen}>
-      <ScrollView contentContainerStyle={styles.scrollView}>
+    <KeyboardAvoidingView
+      style={styles.screen}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
+    >
+      <ScrollView
+        contentContainerStyle={styles.scrollView}
+        keyboardShouldPersistTaps="handled"
+        showsVerticalScrollIndicator={false}
+      >
         <Image
           style={styles.logo}
           source={{ uri: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/bitlabs-skill-images/logo.png" }} // Replace with your actual logo path
@@ -227,19 +235,19 @@ const handleNext = () => {
 ) : null}
 
         </View>
-      </ScrollView>
 
-      {/* Footer with Back and Next Buttons */}
-      <View style={styles.footer}>
-        <View style={styles.buttonContainer}>
-          <GradientButton
-            title="Next"
-            onPress={handleNext}
-            style={[styles.applyButtonGradient]} // Custom styles if needed
-          />
+        {/* Footer with Back and Next Buttons */}
+        <View style={styles.footer}>
+          <View style={styles.buttonContainer}>
+            <GradientButton
+              title="Next"
+              onPress={handleNext}
+              style={[styles.applyButtonGradient]} // Custom styles if needed
+            />
+          </View>
         </View>
-      </View>
-    </View>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -247,14 +255,11 @@ const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    alignItems: 'center',
-    justifyContent: 'flex-start',
-    padding: 20,
-    paddingBottom: 75,
   },
   scrollView: {
     flexGrow: 1,
-    paddingBottom: 100, // Adds padding to avoid initial overlap
+    paddingHorizontal: 20,
+    paddingBottom: 80,
   },
   logo: {
     width: 150, // Decreased width
@@ -267,15 +272,13 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
-    height: '98%',
-    marginBottom: 40,
+    marginBottom: 20,
   },
   footer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+    width: '100%',
     paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginTop: 20,
     borderTopColor: '#ccc',
   },
   buttonContainer: {

@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, TouchableOpacity, Text, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, Text, StyleSheet, StyleProp, ViewStyle} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import GradientButton from './GradientButton';
 
@@ -8,6 +8,7 @@ interface ActionButtonsProps {
   actionTitle: string;
   isGradient?: boolean; // If true, use GradientButton
   onPressBack?: () => void; // Optional Back Button
+  style?: StyleProp<ViewStyle>; // Custom style to override container style
 }
 
 const ActionButtons: React.FC<ActionButtonsProps> = ({
@@ -15,11 +16,12 @@ const ActionButtons: React.FC<ActionButtonsProps> = ({
   onPressAction,
   actionTitle,
   isGradient = true,
+  style,
 }) => {
   const navigation = useNavigation();
 
   return (
-    <View style={styles.buttonContainer}>
+    <View style={[styles.buttonContainer, style]}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButtonBottom} onPress={() => navigation.goBack()}>
         <Text style={styles.backButtonText}>Back</Text>

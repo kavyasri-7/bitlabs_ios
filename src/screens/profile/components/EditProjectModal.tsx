@@ -8,6 +8,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   ScrollView,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ProfileApiService } from '@services/profile/ProfileApiService';
@@ -288,16 +290,25 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Edit Project Details</Text>
-            <TouchableOpacity onPress={onClose}>
-              <MaterialIcons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}>
+        <View style={styles.overlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Edit Project Details</Text>
+              <TouchableOpacity onPress={onClose}>
+                <MaterialIcons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
 
-          <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              bounces={false}>
             <View style={styles.form}>
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>Project Title <Text style={styles.required}>*</Text></Text>
@@ -489,6 +500,7 @@ const EditProjectModal: React.FC<EditProjectModalProps> = ({
         </View>
         <Toast config={toastConfig} />
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -522,6 +534,9 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     maxHeight: 500,
+  },
+  scrollContent: {
+    paddingBottom: 8,
   },
   form: {
     gap: 16,

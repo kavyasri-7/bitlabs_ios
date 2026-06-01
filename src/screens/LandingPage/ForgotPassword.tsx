@@ -42,106 +42,107 @@ const ForgotPassword = () => {
   } = useForgotPasswordViewModal();
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   return (
-    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}    style={{ flex: 1, paddingBottom:25 }} >
+    <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1, paddingBottom: 25 }} >
       <ScrollView
-    contentContainerStyle={{ flexGrow: 1 }}
-  >
-      <View style={styles.container}>
-        <Navbar title="Forgot Password" onBackPress={() => navigation.navigate('LandingPage')} />
-          <View style={{display: 'flex',flexDirection: 'row',  justifyContent: 'flex-end'}}>
-                <Text style={{ color: 'red', marginTop  : 10,  marginRight: 30  }}>*</Text>
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <View style={styles.container}>
+          <Navbar title="Forgot Password" onBackPress={() => navigation.navigate('LandingPage')} />
+          <View style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+            <Text style={{ color: 'red', marginTop: 10, marginRight: 30 }}>*</Text>
           </View>
-        <TextInput
-          style={styles.input}
-          placeholder="Email"
-          placeholderTextColor="#B1B1B1"
-          value={email}
-          onChangeText={setEmail}
-          editable={!isOtpVerified}
-        />
-        {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
-        {otpReceived ? (
-          isOtpVerified ? (
-            <View style={styles.form}>
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  placeholder="New Password"
-                  placeholderTextColor="#B1B1B1"
-                  style={styles.passwordInput}
-                  secureTextEntry={!isPasswordVisible}
-                  onBlur={() => {
-                    setIsPasswordVisible(false);
-                  }}
-                  value={newPassword}
-                  onChangeText={setNewPassword}
-                />
-                <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-                  <Image
-                    source={
-                      isPasswordVisible
-                        ? require('../../assests/LandingPage/openeye.png')
-                        : require('../../assests/LandingPage/closedeye.png')
-                    }
-                    style={styles.eyeImage}
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            placeholderTextColor="#B1B1B1"
+            value={email}
+            onChangeText={setEmail}
+            editable={!isOtpVerified}
+          />
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
+          {otpReceived ? (
+            isOtpVerified ? (
+              <View style={styles.form}>
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    placeholder="New Password"
+                    placeholderTextColor="#B1B1B1"
+                    style={styles.passwordInput}
+                    secureTextEntry={!isPasswordVisible}
+                    onBlur={() => {
+                      setIsPasswordVisible(false);
+                    }}
+                    value={newPassword}
+                    onChangeText={setNewPassword}
                   />
-                </TouchableOpacity>
-              </View>
-
-              <View style={styles.passwordContainer}>
-                <TextInput
-                  placeholder="Confirm Password"
-                  placeholderTextColor="#B1B1B1"
-                  style={styles.passwordInput}
-                  secureTextEntry={!isResetPasswordVisible}
-                  value={confirmPassword}
-                  onBlur={() => {
-                    setIsResetPasswordVisible(false);
-                  }}
-                  onChangeText={setConfirmPassword}
-                />
-
-                <TouchableOpacity
-                  onPress={() => setIsResetPasswordVisible(!isResetPasswordVisible)}>
-                  <Image
-                    source={
-                      isResetPasswordVisible
-                        ? require('../../assests/LandingPage/openeye.png')
-                        : require('../../assests/LandingPage/closedeye.png')
-                    }
-                    style={styles.eyeImage}
-                  />
-                </TouchableOpacity>
-              </View>
-              {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
-            </View>
-          ) : (
-            <View style={styles.form}>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter OTP"
-                placeholderTextColor="#B1B1B1"
-                value={otp}
-                onChangeText={setOtp}
-              />
-              {!isOtpValid && <Text style={styles.errorText}>Invalid OTP</Text>}
-              <View style={styles.otpContainer}>
-                {isOtpExpired && (
-                  <TouchableOpacity onPress={sendOTP}>
-                    <Text style={styles.resendText}>Resend OTP</Text>
+                  <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+                    <Image
+                      source={
+                        isPasswordVisible
+                          ? require('../../assests/LandingPage/openeye.png')
+                          : require('../../assests/LandingPage/closedeye.png')
+                      }
+                      style={styles.eyeImage}
+                    />
                   </TouchableOpacity>
+                </View>
+
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    placeholder="Confirm Password"
+                    placeholderTextColor="#B1B1B1"
+                    style={styles.passwordInput}
+                    secureTextEntry={!isResetPasswordVisible}
+                    value={confirmPassword}
+                    onBlur={() => {
+                      setIsResetPasswordVisible(false);
+                    }}
+                    onChangeText={setConfirmPassword}
+                  />
+
+                  <TouchableOpacity
+                    onPress={() => setIsResetPasswordVisible(!isResetPasswordVisible)}>
+                    <Image
+                      source={
+                        isResetPasswordVisible
+                          ? require('../../assests/LandingPage/openeye.png')
+                          : require('../../assests/LandingPage/closedeye.png')
+                      }
+                      style={styles.eyeImage}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
+              </View>
+            ) : (
+              <View style={styles.form}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter OTP"
+                  placeholderTextColor="#B1B1B1"
+                  value={otp}
+                  onChangeText={setOtp}
+                />
+                {!isOtpValid && <Text style={styles.errorText}>Invalid OTP</Text>}
+                <View style={styles.otpContainer}>
+                  {isOtpExpired && (
+                    <TouchableOpacity onPress={sendOTP}>
+                      <Text style={styles.resendText}>Resend OTP</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
+                {otpReceived && !isOtpExpired && (
+                  <Text style={styles.timerText}>Please verify OTP within {timer} seconds</Text>
                 )}
               </View>
-              {otpReceived && !isOtpExpired && (
-                <Text style={styles.timerText}>Please verify OTP within {timer} seconds</Text>
-              )}
-            </View>
-          )
-        ) : null}
-        <ActionButtons
-          onPressAction={otpReceived ? (isOtpVerified ? resetUserPassword : verifyOTP) : sendOTP}
-          actionTitle={otpReceived ? (isOtpVerified ? 'Save' : 'Verify OTP') : 'Send OTP'}
-        />
-      </View>
+            )
+          ) : null}
+          <ActionButtons
+            onPressAction={otpReceived ? (isOtpVerified ? resetUserPassword : verifyOTP) : sendOTP}
+            actionTitle={otpReceived ? (isOtpVerified ? 'Save' : 'Verify OTP') : 'Send OTP'}
+            style={styles.actionButtons}
+          />
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
@@ -208,7 +209,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: 'red',
-    marginBottom: 10,
+    marginBottom: 8,
     textAlign: 'center',
 
     fontFamily: 'PlusJakartaSans-Medium',
@@ -267,6 +268,13 @@ const styles = StyleSheet.create({
     height: 20,
     width: 20,
     resizeMode: 'contain',
+  },
+  actionButtons: {
+    position: 'relative',
+    bottom: 0,
+    marginTop: 40,
+    width: '100%',
+    paddingHorizontal: 15,
   },
 });
 

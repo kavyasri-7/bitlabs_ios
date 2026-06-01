@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
   Dimensions,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import ProgressBar from '@components/progessBar/ProgressBar';
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -465,18 +467,26 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
     openExperienceDropdown;
 
   return (
-    <View style={styles.screen}>
-      <ScrollView scrollEnabled={!isAnyDropdownOpen || !openLocationDropdown} style={styles.scrollView}>
-        <Image style={styles.logo} source={{ uri: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/bitlabs-skill-images/logo.png" }} />
+    <KeyboardAvoidingView 
+      style={styles.screen}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
+      <Image style={styles.logo} source={{ uri: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/bitlabs-skill-images/logo.png" }} />
 
-        {/* Container with overflow visible to prevent dropdown clipping */}
-        <View style={styles.container}>
-          <View style={styles.header}>
-            <Text style={styles.completeProfile}>Complete Your Profile</Text>
-            <Text style={styles.subHeader}>Fill the form fields to go next step</Text>
-          </View>
+      {/* Container with overflow visible to prevent dropdown clipping */}
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.completeProfile}>Complete Your Profile</Text>
+          <Text style={styles.subHeader}>Fill the form fields to go next step</Text>
+        </View>
 
-          <ProgressBar initialStep={currentStep} />
+        <ProgressBar initialStep={currentStep} />
+
+        <ScrollView 
+          scrollEnabled={!isAnyDropdownOpen || !openLocationDropdown} 
+          contentContainerStyle={styles.scrollView}
+          style={{ flex: 1 }}
+        >
           {/* Qualification Dropdown */}
           <View style={[styles.dropdownWrapper, { zIndex: openQualificationDropdown ? 5000 : 1000 }]}>
             <DropDownPicker
@@ -504,11 +514,6 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
               dropDownDirection="BOTTOM"
               zIndex={1000}
               zIndexInverse={1000}
-              searchable={true}
-              searchPlaceholder="Search qualification..."
-              searchPlaceholderTextColor="#9ca3af"
-              searchTextInputStyle={styles.searchTextInput}
-              searchContainerStyle={styles.searchContainer}
             />
             {Boolean(errors.qualification) && <Text style={styles.errorText}>{errors.qualification}</Text>}
           </View>
@@ -538,11 +543,6 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
               dropDownDirection="BOTTOM"
               zIndex={990}
               zIndexInverse={990}
-              searchable={true}
-              searchPlaceholder="Search specialization..."
-              searchPlaceholderTextColor="#9ca3af"
-              searchTextInputStyle={styles.searchTextInput}
-              searchContainerStyle={styles.searchContainer}
             />
             {Boolean(errors.specialization) && <Text style={styles.errorText}>{errors.specialization}</Text>}
           </View>
@@ -574,11 +574,6 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
               zIndexInverse={900}
               mode="BADGE"
               showBadgeDot={false}
-              searchable={true}
-              searchPlaceholder="Search skills..."
-              searchPlaceholderTextColor="#9ca3af"
-              searchTextInputStyle={styles.searchTextInput}
-              searchContainerStyle={styles.searchContainer}
             />
             {Boolean(errors.skills) && <Text style={styles.errorText}>{errors.skills}</Text>}
           </View>
@@ -613,11 +608,6 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
               zIndexInverse={800}
               mode="BADGE"
               showBadgeDot={false}
-              searchable={true}
-              searchPlaceholder="Search location..."
-              searchPlaceholderTextColor="#9ca3af"
-              searchTextInputStyle={styles.searchTextInput}
-              searchContainerStyle={styles.searchContainer}
             />
             {Boolean(errors.preferredLocation) && (
               <Text style={styles.errorText}>{errors.preferredLocation}</Text>
@@ -655,19 +645,14 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
               dropDownDirection="BOTTOM"
               zIndex={700}
               zIndexInverse={700}
-              searchable={true}
-              searchPlaceholder="Search experience..."
-              searchPlaceholderTextColor="#9ca3af"
-              searchTextInputStyle={styles.searchTextInput}
-              searchContainerStyle={styles.searchContainer}
             />
             {Boolean(errors.experience) && (
               <Text style={styles.errorText}>{errors.experience}</Text>
             )}
           </View>
 
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       <View style={styles.footer}>
         <View style={styles.buttonContainer}>
@@ -701,7 +686,7 @@ const Dummystep2: React.FC = ({ route, navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 const styles = StyleSheet.create({
@@ -721,12 +706,12 @@ const styles = StyleSheet.create({
   },
   // Container with overflow visible to prevent dropdown clipping
   container: {
+    flex: 1,
     width: '100%',
-    height: height * 1.05,
     padding: 20,
     backgroundColor: '#fff',
     borderRadius: 10,
-    marginBottom: 40,
+    marginBottom: 80, // Leave room for absolute footer
     overflow: 'visible', // Critical: allows dropdowns to render outside container bounds
   },
   footer: {
@@ -843,7 +828,7 @@ const styles = StyleSheet.create({
   // ScrollView with overflow visible to prevent dropdown clipping
   scrollView: {
     flexGrow: 1,
-    paddingBottom: 100,
+    paddingBottom: 250,
     overflow: 'visible', // Critical: allows dropdowns to render outside ScrollView bounds
   },
   searchTextInput: {

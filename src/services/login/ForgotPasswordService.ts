@@ -44,9 +44,10 @@ const resetPassword = async (
   password: string,
   confirmedPassword: string,
 ): Promise<AuthResponse> => {
+  const lowercaseEmail = convertToLowerCase(email);
   try {
     // const {encryptedPassword,iv} = encryptPassword(password,secretkey)
-    const response = await apiClient.post(`/applicant/applicantreset-password/${email}`, {
+    const response = await apiClient.post(`/applicant/applicantreset-password/${lowercaseEmail}`, {
       password,
       confirmedPassword,
     });

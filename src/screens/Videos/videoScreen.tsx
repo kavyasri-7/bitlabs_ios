@@ -147,6 +147,8 @@ const VerifiedVideosScreen: React.FC<{
 
   const [progress, setProgress] = useState<number>(0);
 
+  const [trackWidth, setTrackWidth] = useState(0);
+
   const isSeekingRef = useRef(false);
 
   const currentTimeRef = useRef(0);
@@ -453,43 +455,61 @@ const VerifiedVideosScreen: React.FC<{
                 transform: [{ scale: fsScale }],
               }}
             >
-              {videoSource && (
-                <Video
-                  ref={videoRef}
-                  source={videoSource}
-                  style={{ flex: 1 }}
-                  resizeMode="contain"
-                  controls={true}
-                  fullscreen={Platform.OS === "ios" ? fsVisible : false}
-                  onFullscreenPlayerDidDismiss={
-                    Platform.OS === "ios" ? closeVideo : undefined
-                  }
-                  progressUpdateInterval={
-                    PROGRESS_UPDATE_INTERVAL
-                  }
-                  onLoad={(d) => {
-                    setDuration(d.duration);
-                  }}
-                  onProgress={(x: any) => {
-                    handleProgress(x);
+              <Pressable 
+                style={{ flex: 1 }} 
+                onPress={() => setPaused(!paused)}
+              >
+                {videoSource && (
+                  <Video
+                    ref={videoRef}
+                    source={videoSource}
+                    style={{ flex: 1 }}
+                    resizeMode="contain"
+                    controls={false}
+                    muted={muted}
+                    paused={paused}
+                    progressUpdateInterval={
+                      PROGRESS_UPDATE_INTERVAL
+                    }
+                    onLoad={(d) => {
+                      setDuration(d.duration);
+                    }}
+                    onProgress={(x: any) => {
+                      handleProgress(x);
 
-                    if (isSeekingRef.current) return;
+                      if (isSeekingRef.current) return;
 
-                    const time = Math.max(
-                      0,
-                      x.currentTime || 0
-                    );
+                      const time = Math.max(
+                        0,
+                        x.currentTime || 0
+                      );
 
-                    setCurrentTime(time);
+                      setCurrentTime(time);
 
-                    setProgress(time);
+                      setProgress(time);
 
-                    currentTimeRef.current = time;
-                  }}
-                />
+                      currentTimeRef.current = time;
+                    }}
+                  />
+                )}
+              </Pressable>
+
+              {paused && videoSource && (
+                <View 
+                  style={{ 
+                    position: 'absolute', 
+                    top: '50%', 
+                    left: '50%', 
+                    transform: [{ translateX: -32 }, { translateY: -32 }], 
+                    zIndex: 10 
+                  }} 
+                  pointerEvents="none"
+                >
+                  <Icon name="play-circle" size={64} color="rgba(255,255,255,0.8)" />
+                </View>
               )}
 
-              <View style={[styles.fsControls, { top: 70 }]}>
+              <View style={[styles.fsControls, { top: 20 }]}>
                 <TouchableOpacity
                   onPress={closeVideo}
                   style={styles.fsCloseBtn}
@@ -500,8 +520,54 @@ const VerifiedVideosScreen: React.FC<{
                     color="#fff"
                   />
                 </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => setMuted(!muted)}
+                  style={styles.fsCloseBtn}
+                >
+                  <Ionicons
+                    name={muted ? "volume-mute" : "volume-high"}
+                    size={24}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
               </View>
 
+              <View style={styles.bottomSlider}>
+                <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
+                
+                <TouchableOpacity 
+                  activeOpacity={1}
+                  onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
+                  onPress={(e) => {
+                    if (!duration || !videoRef.current || !trackWidth) return;
+                    const { locationX } = e.nativeEvent;
+                    const percent = locationX / trackWidth;
+                    const seekTime = Math.max(0, Math.min(duration, percent * duration));
+                    
+                    isSeekingRef.current = true;
+                    videoRef.current.seek(seekTime);
+                    setCurrentTime(seekTime);
+                    setProgress(seekTime);
+                    
+                    setTimeout(() => {
+                      isSeekingRef.current = false;
+                    }, 500);
+                  }}
+                  style={styles.sliderTouchable}
+                >
+                  <View style={styles.sliderTrack}>
+                    <View 
+                      style={[
+                        styles.sliderFill, 
+                        { width: duration ? `${(currentTime / duration) * 100}%` : '0%' }
+                      ]} 
+                    />
+                  </View>
+                </TouchableOpacity>
+
+                <Text style={styles.timeText}>{formatTime(duration)}</Text>
+              </View>
 
             </Animated.View>
           </SafeAreaView>
@@ -655,11 +721,29 @@ const styles = StyleSheet.create({
     width: "95%",
     alignSelf: "center",
     backgroundColor: "rgba(0,0,0,0.5)",
-    height: 50,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderRadius: 25,
     flexDirection: "row",
     alignItems: "center",
+  },
+
+  sliderTouchable: {
+    flex: 1,
+    height: 30,
+    justifyContent: "center",
+    marginHorizontal: 12,
+  },
+
+  sliderTrack: {
+    height: 4,
+    backgroundColor: "rgba(255,255,255,0.3)",
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+
+  sliderFill: {
+    height: "100%",
+    backgroundColor: "#F97316",
   },
 });

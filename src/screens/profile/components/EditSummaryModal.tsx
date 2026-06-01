@@ -7,6 +7,9 @@ import {
   Modal,
   StyleSheet,
   ActivityIndicator,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ProfileApiService } from '@services/profile/ProfileApiService';
@@ -124,77 +127,88 @@ const EditSummaryModal: React.FC<EditSummaryModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent}>
-          <View style={styles.header}>
-            <Text style={styles.title}>Edit Resume Summary</Text>
-            <TouchableOpacity onPress={onClose}>
-              <MaterialIcons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
-        
-          <View style={styles.form}>
-            <Text style={styles.label}>Resume Summary <Text style={styles.required}>*</Text></Text>
-            <Text style={styles.hint}>Minimum 30 characters, maximum 2000 characters</Text>
-            <TextInput
-              style={[
-                styles.textArea,
-                error && styles.textAreaError,
-                isFocused && styles.textAreaFocused,
-              ]}
-              value={summary}
-              onChangeText={value => {
-                // Replace multiple consecutive spaces with single space
-                const processedValue = value.replace(/\s+/g, ' ');
-                if (processedValue.length <= 2000) {
-                  setSummary(processedValue);
-                  if (error) {
-                    setError('');
-                  }
-                }
-              }}
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-              placeholder="Try adding a resume summary — it helps employers quickly understand your strengths, tech stack, and professional goals."
-              placeholderTextColor="#9ca3af"
-              multiline
-              numberOfLines={8}
-              textAlignVertical="top"
-              maxLength={2000}
-            />
-            <View style={styles.charCountContainer}>
-              <Text style={[
-                styles.charCount,
-                summary.trim().length < 30 && summary.trim().length > 0 && styles.charCountWarning,
-                summary.length >= 1900 && summary.length <= 2000 && styles.charCountMaxWarning
-              ]}>
-                {summary.length} / 2000 characters {summary.trim().length < 30 && summary.trim().length > 0 && '(minimum 30 required)'}
-              </Text>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ flex: 1 }}>
+        <View style={styles.overlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.header}>
+              <Text style={styles.title}>Edit Resume Summary</Text>
+              <TouchableOpacity onPress={onClose}>
+                <MaterialIcons name="close" size={24} color="#333" />
+              </TouchableOpacity>
             </View>
-            {error && <Text style={styles.errorText}>{error}</Text>}
-          </View>
+          
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
+              bounces={false}>
+              <View style={styles.form}>
+                <Text style={styles.label}>Resume Summary <Text style={styles.required}>*</Text></Text>
+                <Text style={styles.hint}>Minimum 30 characters, maximum 2000 characters</Text>
+                <TextInput
+                  style={[
+                    styles.textArea,
+                    error && styles.textAreaError,
+                    isFocused && styles.textAreaFocused,
+                  ]}
+                  value={summary}
+                  onChangeText={value => {
+                    // Replace multiple consecutive spaces with single space
+                    const processedValue = value.replace(/\s+/g, ' ');
+                    if (processedValue.length <= 2000) {
+                      setSummary(processedValue);
+                      if (error) {
+                        setError('');
+                      }
+                    }
+                  }}
+                  onFocus={() => setIsFocused(true)}
+                  onBlur={() => setIsFocused(false)}
+                  placeholder="Try adding a resume summary — it helps employers quickly understand your strengths, tech stack, and professional goals."
+                  placeholderTextColor="#9ca3af"
+                  multiline
+                  numberOfLines={8}
+                  textAlignVertical="top"
+                  maxLength={2000}
+                />
+                <View style={styles.charCountContainer}>
+                  <Text style={[
+                    styles.charCount,
+                    summary.trim().length < 30 && summary.trim().length > 0 && styles.charCountWarning,
+                    summary.length >= 1900 && summary.length <= 2000 && styles.charCountMaxWarning
+                  ]}>
+                    {summary.length} / 2000 characters {summary.trim().length < 30 && summary.trim().length > 0 && '(minimum 30 required)'}
+                  </Text>
+                </View>
+                {error && <Text style={styles.errorText}>{error}</Text>}
+              </View>
+            </ScrollView>
 
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[
-                styles.saveButton,
-                (loading || summary.trim().length < 30 || summary.trim().length > 2000) && styles.saveButtonDisabled,
-              ]}
-              onPress={handleSave}
-              disabled={loading || summary.trim().length < 30 || summary.trim().length > 2000}>
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.saveButtonText}>Save</Text>
-              )}
-            </TouchableOpacity>
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[
+                  styles.saveButton,
+                  (loading || summary.trim().length < 30 || summary.trim().length > 2000) && styles.saveButtonDisabled,
+                ]}
+                onPress={handleSave}
+                disabled={loading || summary.trim().length < 30 || summary.trim().length > 2000}>
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
+          <Toast config={toastConfig} />
         </View>
-        <Toast config={toastConfig} />
-      </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };
@@ -213,8 +227,13 @@ const styles = StyleSheet.create({
     padding: 24,
     width: '100%',
     maxWidth: 500,
-    minHeight:450,
-    maxHeight: '100%',
+    maxHeight: '90%',
+  },
+  scrollView: {
+    maxHeight: 250,
+  },
+  scrollContent: {
+    paddingBottom: 8,
   },
   header: {
     flexDirection: 'row',

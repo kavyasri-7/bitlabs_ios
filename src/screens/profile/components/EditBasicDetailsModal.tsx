@@ -8,6 +8,8 @@ import {
   StyleSheet,
   ActivityIndicator,
   ScrollView,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { ProfileApiService } from '@services/profile/ProfileApiService';
@@ -363,20 +365,24 @@ const EditBasicDetailsModal: React.FC<EditBasicDetailsModalProps> = ({
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <View style={styles.overlay}>
-        <View style={styles.modalContent} pointerEvents="box-none">
-          <View style={styles.header}>
-            <Text style={styles.title}>Edit Basic Details</Text>
-            <TouchableOpacity onPress={onClose}>
-              <MaterialIcons name="close" size={24} color="#333" />
-            </TouchableOpacity>
-          </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}>
+        <View style={styles.overlay}>
+          <View style={styles.modalContent} pointerEvents="box-none">
+            <View style={styles.header}>
+              <Text style={styles.title}>Edit Basic Details</Text>
+              <TouchableOpacity onPress={onClose}>
+                <MaterialIcons name="close" size={24} color="#333" />
+              </TouchableOpacity>
+            </View>
 
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled">
+            <ScrollView
+              style={styles.scrollView}
+              contentContainerStyle={styles.scrollContent}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled">
             {/* <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Basic details</Text>
             </View> */}
@@ -521,6 +527,7 @@ const EditBasicDetailsModal: React.FC<EditBasicDetailsModalProps> = ({
         </View>
         <Toast config={toastConfig} />
       </View>
+      </KeyboardAvoidingView>
     </Modal>
   );
 };

@@ -626,7 +626,7 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
       <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 40 : 0}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
           style={{ flex: 1 }}
         >
           <View style={styles.overlay}>
@@ -638,7 +638,12 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
                 </TouchableOpacity>
               </View>
 
-              <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+              <ScrollView 
+                style={styles.scrollView} 
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false} 
+                keyboardShouldPersistTaps="handled"
+                bounces={false}>
                 <View style={styles.form}>
                   <View style={styles.inputGroup}>
                     <Text style={styles.label}>Full Name <Text style={styles.required}>*</Text></Text>
@@ -1148,6 +1153,9 @@ const styles = StyleSheet.create({
   scrollView: {
     maxHeight: 500,
     flexShrink: 1,
+  },
+  scrollContent: {
+    paddingBottom: 8,
   },
   form: {
     gap: 16,
