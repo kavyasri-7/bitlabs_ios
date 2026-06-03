@@ -617,21 +617,21 @@ function Dashboard() {
                 </View>
 
 
-                {/* <TouchableOpacity 
-                    style={{ flex: 1 ,padding: 10, borderRadius: 8, marginRight: 16,alignItems:'center',justifyContent:'center',height:55}}
-                    onPress={() => navigation.navigate('LMSMainPage')}
+                {<TouchableOpacity
+                  style={{ flex: 1, padding: 10, borderRadius: 8, marginRight: 16, alignItems: 'center', justifyContent: 'center', height: 55 }}
+                  onPress={() => navigation.navigate('LMSMainPage')}
+                >
+                  <LinearGradient
+                    colors={["#FBBB5C", "#E66A0E"]}
+                    start={{ x: 1, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    useAngle={true}
+                    angle={225}
+                    style={styles.cardGradient}
                   >
-                    <LinearGradient
-                          colors={["#FBBB5C", "#E66A0E"]}
-                          start={{ x: 1, y: 0 }}
-                          end={{ x: 0, y: 1 }}
-                          useAngle={true}
-                          angle={225}
-                          style={styles.cardGradient}
-                        >
-                    <Text style={{ color: 'white' ,height:20}}>LMS</Text>
-                    </LinearGradient>
-                  </TouchableOpacity> */}
+                    <Text style={{ color: 'white', height: 20 }}>LMS</Text>
+                  </LinearGradient>
+                </TouchableOpacity>}
 
               </View>
 

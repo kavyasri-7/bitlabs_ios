@@ -27,6 +27,7 @@ const app = getApp();
 const messaging = getMessaging(app);
 
 const NotificationsSetup = () => {
+
   const { userId } = useAuth();
 
   // ✅ Request user permission for notifications

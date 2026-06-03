@@ -1,25 +1,25 @@
-import React, {useContext} from 'react';
-import {View, Text, Image, ScrollView, StyleSheet, Dimensions, Linking, useWindowDimensions} from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, Image, ScrollView, StyleSheet, Dimensions, Linking, useWindowDimensions } from 'react-native';
 import GradientButton from '../styles/GradientButton';
-import {useNavigation} from '@react-navigation/native';
-import {RootStackParamList} from '@models/Model';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamList } from '@models/Model';
 import UserContext from '../../context/UserContext';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
-const {width: screenWidth, height: screenHeight} = Dimensions.get('window');
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'Badges'>;
 
 const ExploreSection = () => {
-   const TABLET_BREAKPOINT = 768;
-     const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-    const isTablet = screenWidth >= TABLET_BREAKPOINT;
-  const {verifiedStatus} = useContext(UserContext);
+  const TABLET_BREAKPOINT = 768;
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+  const isTablet = screenWidth >= TABLET_BREAKPOINT;
+  const { verifiedStatus } = useContext(UserContext);
   const navigation = useNavigation<NavigationProp>();
 
   return (
     <View>
-      <Text style={[styles.textBelowCard, isTablet && { fontSize: wp('4%')}]}>Explore</Text>
+      <Text style={[styles.textBelowCard, isTablet && { fontSize: wp('4%') }]}>Explore</Text>
       <ScrollView
         horizontal={true}
         showsHorizontalScrollIndicator={false}
@@ -42,7 +42,7 @@ const ExploreSection = () => {
           />
         </View> */}
         {!verifiedStatus && (
-          <View style={[styles.largeCard ,isTablet && styles.tabletCard ]}>
+          <View style={[styles.largeCard, isTablet && styles.tabletCard]}>
             <View
               style={{
                 borderColor: 'red',
@@ -51,13 +51,13 @@ const ExploreSection = () => {
                 paddingHorizontal: 5,
                 paddingVertical: 2,
                 alignSelf: 'flex-end',
-                marginBottom:2
+                marginBottom: 2
               }}>
-              <Text style={{fontFamily: 'PlusJakartaSans-Medium', color: 'red', fontSize: 12 }}>
+              <Text style={{ fontFamily: 'PlusJakartaSans-Medium', color: 'red', fontSize: 12 }}>
                 New
               </Text>
             </View>
-            <Text style={[styles.cardTitle , isTablet && {fontSize: wp('3%')}]}>Earn Pre-Screened Badge</Text>
+            <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>Earn Pre-Screened Badge</Text>
             <Image
               source={require("../../assests/Images/boyimage.png")}
               style={styles.cardImage}
@@ -66,13 +66,13 @@ const ExploreSection = () => {
             <GradientButton
               title="Take Test"
               onPress={() => navigation.navigate('Badges')}
-              style={[styles.cardButton, isTablet ? {width: wp('50%')}:{}]}
+              style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
             />
           </View>
         )}
 
-        <View style={[styles.largeCard, styles.lastCard, isTablet&& styles.tabletCard]}>
-          <Text style={[styles.cardTitle ,isTablet && {fontSize: wp('3%')}]}>
+        <View style={[styles.largeCard, styles.lastCard, isTablet && styles.tabletCard]}>
+          <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
             Get Certified on Advanced Technologies
           </Text>
           <Image
@@ -82,10 +82,10 @@ const ExploreSection = () => {
           <GradientButton
             title="Start Learning"
             onPress={() => Linking.openURL('https://upskill.bitlabs.in/login/index.php')}
-            style={[styles.cardButton, isTablet ? {width: wp('50%')} : {}]}
+            style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
           />
         </View>
-          {/*  Tech Buzz Shorts Card */}
+        {/*  Tech Buzz Shorts Card */}
         <View style={[styles.largeCard, isTablet && styles.tabletCard]}>
           <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
             Tech Buzz Shorts
@@ -94,60 +94,61 @@ const ExploreSection = () => {
             source={require('../../assests/Images/MentorConnectLogo.png')} // 👈 Add an image to your assets
             style={styles.cardImage}
           />
-         
+
           <GradientButton
             title="Watch Now"
             onPress={() => navigation.navigate('VerifiedVideosScreen')} // 👈 Navigate to videos
             style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
           />
         </View>
-         <View
-  style={[styles.largeCard, styles.lastCard, isTablet && styles.tabletCard]}
->
-  <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
-    Participate in Innovation Arena
-  </Text>
-  <Image
-    source={require('../../assests/Images/HackathonLogo.png')} // add hackathon image in assets
-    style={styles.cardImage}
-  />
-  <GradientButton
-    title="Join Innovation Arena"
-    onPress={() => navigation.navigate('BottomTab' as any, { screen: 'Hackathon' } as any)} // 👈 Navigates to Arena tab with bottom nav
-    style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
-  />
-</View>
+        <View
+          style={[styles.largeCard, styles.lastCard, isTablet && styles.tabletCard]}
+        >
+          <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
+            Participate in Innovation Arena
+          </Text>
+          <Image
+            source={require('../../assests/Images/HackathonLogo.png')} // add hackathon image in assets
+            style={styles.cardImage}
+          />
 
-<View style={[styles.largeCard, isTablet && styles.tabletCard]}>
-  <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
-    Connect with Mentors
-  </Text>
-  <Image
-    source={require('../../assests/Images/MentorConnectLogo.png')} // add mentor connect image in assets
-    style={styles.cardImage}
-  />
-  <GradientButton
-    title="Connect Now"
-    onPress={() => navigation.navigate('BottomTab' as any, { screen: 'Mentor Sphere' } as any)} 
-    style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
-  />
-</View>
+          <GradientButton
+            title="Join Innovation Arena"
+            onPress={() => navigation.navigate('BottomTab' as any, { screen: 'Hackathon' } as any)} // 👈 Navigates to Arena tab with bottom nav
+            style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
+          />
+        </View>
 
-<View style={[styles.largeCard, isTablet && styles.tabletCard]}>
-  <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
-    Interview Preparation
-  </Text>
-  <Image
-    source={require('../../assests/Images/HackathonLogo.png')} // add mentor connect image in assets
-    style={styles.cardImage}
-  />
-  <GradientButton
-    title="Ask Now"
-    onPress={() => navigation.navigate("InterviewPreparation")} 
-    style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
-  />
-</View>
-  
+        <View style={[styles.largeCard, isTablet && styles.tabletCard]}>
+          <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
+            Connect with Mentors
+          </Text>
+          <Image
+            source={require('../../assests/Images/MentorConnectLogo.png')} // add mentor connect image in assets
+            style={styles.cardImage}
+          />
+          <GradientButton
+            title="Connect Now"
+            onPress={() => navigation.navigate('BottomTab' as any, { screen: 'Mentor Sphere' } as any)}
+            style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
+          />
+        </View>
+
+        <View style={[styles.largeCard, isTablet && styles.tabletCard]}>
+          <Text style={[styles.cardTitle, isTablet && { fontSize: wp('3%') }]}>
+            Interview Preparation
+          </Text>
+          <Image
+            source={require('../../assests/Images/HackathonLogo.png')} // add mentor connect image in assets
+            style={styles.cardImage}
+          />
+          <GradientButton
+            title="Ask Now"
+            onPress={() => navigation.navigate("InterviewPreparation")}
+            style={[styles.cardButton, isTablet ? { width: wp('50%') } : {}]}
+          />
+        </View>
+
       </ScrollView>
     </View>
   );
@@ -179,7 +180,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: hp('34%'),
   },
-  tabletCard:{
+  tabletCard: {
     width: wp('50%'),
     height: hp('40%'),
   },
@@ -195,8 +196,8 @@ const styles = StyleSheet.create({
     fontFamily: 'PlusJakartaSans-Bold',
     color: '#000000',
     marginBottom: hp('1%'),
-    marginTop:hp('1%'),
-    width:'100%'
+    marginTop: hp('1%'),
+    width: '100%'
   },
   cardButton: {
     marginTop: screenHeight * 0.02,
