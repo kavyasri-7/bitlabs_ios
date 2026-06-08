@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 type BadgeProgressBarProps = {
@@ -15,6 +15,7 @@ const BadgeProgressBar: React.FC<BadgeProgressBarProps> = ({
   borderColor = '#EA7B20',
   scoreDetails,
 }) => {
+  const [isPointsModalOpen, setIsPointsModalOpen] = React.useState(false);
   const getPoints = (badge: string) => {
     return scoreDetails?.badgeScores?.find((b: any) => b.badge === badge)?.points;
   };
@@ -102,7 +103,12 @@ const BadgeProgressBar: React.FC<BadgeProgressBarProps> = ({
     <View style={[styles.card, { backgroundColor, borderColor }]}>
       <View style={styles.wrapper}>
         <View style={styles.progressTextContainer}>
-          <Text style={styles.progressLabel}>Badge Achievement Level</Text>
+          <View style={styles.progressHeaderLeft}>
+            <Text style={styles.progressLabel}>Badge Achievement Level</Text>
+            <TouchableOpacity onPress={() => setIsPointsModalOpen(true)}>
+              <Text style={styles.learnMoreText}>Learn More</Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.progressPercentage}>{Math.round(overallProgress)}%</Text>
         </View>
 
@@ -189,6 +195,114 @@ const BadgeProgressBar: React.FC<BadgeProgressBarProps> = ({
           <Text style={styles.congratsText}>Congrats Buddy! You unlocked all badges!</Text>
         )}
       </View>
+
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={isPointsModalOpen}
+        onRequestClose={() => setIsPointsModalOpen(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            {/* Header */}
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>How do points work?</Text>
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => setIsPointsModalOpen(false)}
+              >
+                <Text style={styles.closeButtonText}>✕</Text>
+              </TouchableOpacity>
+            </View>
+
+            {/* Subtitle */}
+            <Text style={styles.modalSubtitle}>
+              You can earn points by taking one of the actions below.
+            </Text>
+
+            {/* List */}
+            <View style={styles.modalList}>
+              {/* Card 1: Conquer The Challenge */}
+              <View style={styles.modalCard}>
+                <View style={styles.modalCardLeft}>
+                  <View style={[styles.iconWrap, { backgroundColor: '#FFF5E6' }]}>
+                    <Text style={styles.iconText}>🏆</Text>
+                  </View>
+                  <View style={styles.modalDetails}>
+                    <Text style={styles.cardTitle}>Conquer The Challenge</Text>
+                    <Text style={styles.cardSub}>Hackathon Submission</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardValue}>+25 Points</Text>
+              </View>
+
+              {/* Card 2: Prove Your Expertise */}
+              <View style={styles.modalCard}>
+                <View style={styles.modalCardLeft}>
+                  <View style={[styles.iconWrap, { backgroundColor: '#FFF0F5' }]}>
+                    <Text style={styles.iconText}>🧠</Text>
+                  </View>
+                  <View style={styles.modalDetails}>
+                    <Text style={styles.cardTitle}>Prove Your Expertise</Text>
+                    <Text style={styles.cardSub}>Skill Validation Test</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardValue}>+20 Points</Text>
+              </View>
+
+              {/* Card 3: Ignite Your Journey */}
+              <View style={styles.modalCard}>
+                <View style={styles.modalCardLeft}>
+                  <View style={[styles.iconWrap, { backgroundColor: '#E6F7FF' }]}>
+                    <Text style={styles.iconText}>🚀</Text>
+                  </View>
+                  <View style={styles.modalDetails}>
+                    <Text style={styles.cardTitle}>Ignite Your Journey</Text>
+                    <Text style={styles.cardSub}>Hackathon Registration</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardValue}>+5 Points</Text>
+              </View>
+
+              {/* Card 4: Link With Leaders */}
+              <View style={styles.modalCard}>
+                <View style={styles.modalCardLeft}>
+                  <View style={[styles.iconWrap, { backgroundColor: '#F6FFED' }]}>
+                    <Text style={styles.iconText}>🤝</Text>
+                  </View>
+                  <View style={styles.modalDetails}>
+                    <Text style={styles.cardTitle}>Link With Leaders</Text>
+                    <Text style={styles.cardSub}>Mentor Connect Registration</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardValue}>+5 Points</Text>
+              </View>
+
+              {/* Card 5: Catch The Vibe */}
+              <View style={styles.modalCard}>
+                <View style={styles.modalCardLeft}>
+                  <View style={[styles.iconWrap, { backgroundColor: '#FFF7E6' }]}>
+                    <Text style={styles.iconText}>📺</Text>
+                  </View>
+                  <View style={styles.modalDetails}>
+                    <Text style={styles.cardTitle}>Catch The Vibe</Text>
+                    <Text style={styles.cardSub}>Watching Tech Buzz Shorts</Text>
+                  </View>
+                </View>
+                <Text style={styles.cardValue}>+2 Points</Text>
+              </View>
+            </View>
+
+            {/* Footer */}
+            <TouchableOpacity
+              style={styles.gotItButton}
+              onPress={() => setIsPointsModalOpen(false)}
+            >
+              <Text style={styles.gotItText}>Got It!</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -310,6 +424,133 @@ const styles = StyleSheet.create({
     color: '#28a745',
     textAlign: 'center',
     marginTop: hp('0.5%'),
+  },
+  progressHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  learnMoreText: {
+    fontSize: hp('1.4%'),
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#EA7B20',
+    marginLeft: wp('2%'),
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: wp('90%'),
+    backgroundColor: '#FFF9F2',
+    borderRadius: 16,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#EA7B20',
+  },
+  modalHeader: {
+    backgroundColor: '#EA7B20',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: hp('2%'),
+    paddingHorizontal: wp('5%'),
+  },
+  modalTitle: {
+    fontSize: hp('2.2%'),
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#FFF',
+  },
+  closeButton: {
+    backgroundColor: '#FFF',
+    width: 26,
+    height: 26,
+    borderRadius: 4,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    fontSize: 14,
+    color: '#000',
+    fontWeight: 'bold',
+  },
+  modalSubtitle: {
+    fontSize: hp('1.6%'),
+    color: '#555',
+    fontFamily: 'PlusJakartaSans-Medium',
+    textAlign: 'center',
+    marginVertical: hp('2%'),
+    paddingHorizontal: wp('5%'),
+  },
+  modalList: {
+    paddingHorizontal: wp('4%'),
+  },
+  modalCard: {
+    backgroundColor: '#FFF',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#E8E8E8',
+    padding: wp('3.5%'),
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: hp('1.2%'),
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    elevation: 1,
+  },
+  modalCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  iconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: wp('3%'),
+  },
+  iconText: {
+    fontSize: 18,
+  },
+  modalDetails: {
+    flex: 1,
+  },
+  cardTitle: {
+    fontSize: hp('1.6%'),
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#1A1A1A',
+  },
+  cardSub: {
+    fontSize: hp('1.3%'),
+    fontFamily: 'PlusJakartaSans-Medium',
+    color: '#666',
+    marginTop: 2,
+  },
+  cardValue: {
+    fontSize: hp('1.6%'),
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#1A1A1A',
+    marginLeft: 8,
+  },
+  gotItButton: {
+    backgroundColor: '#EA7B20',
+    borderRadius: 24,
+    paddingVertical: hp('1.6%'),
+    marginHorizontal: wp('5%'),
+    marginBottom: hp('2.5%'),
+    marginTop: hp('1.5%'),
+    alignItems: 'center',
+  },
+  gotItText: {
+    fontSize: hp('1.8%'),
+    fontFamily: 'PlusJakartaSans-Bold',
+    color: '#FFF',
   },
 });
 

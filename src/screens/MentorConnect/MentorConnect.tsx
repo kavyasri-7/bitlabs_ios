@@ -36,6 +36,7 @@ const getCurrentDate = () => {
 const { width } = Dimensions.get("window");
 
 const NoMentorConnectsImage = require("../../assests/Images/mentorconnect/NoMentorConnects.png");
+const DefaultMentorCardImage = require("../../assests/Images/mentorconnect/mentorcard.jpg");
 
 type MentorConnectRouteProp = RouteProp<RootStackParamList, 'MentorConnect'>;
 
@@ -434,6 +435,14 @@ const MentorConnect: React.FC = () => {
     const bannerImageUrl = item.bannerImageUrl ?? item.banner_image_url;
     const dateText = formatDatePill(dateArr, timeArr);
 
+    const [imageSource, setImageSource] = useState<any>(
+      bannerImageUrl ? { uri: bannerImageUrl } : DefaultMentorCardImage
+    );
+
+    useEffect(() => {
+      setImageSource(bannerImageUrl ? { uri: bannerImageUrl } : DefaultMentorCardImage);
+    }, [bannerImageUrl]);
+
     const status = computeStatus(item);
     const isRegistered = registeredMeetingIds.has(Number(meetingId));
 
@@ -447,13 +456,15 @@ const MentorConnect: React.FC = () => {
 
     return (
       <TouchableOpacity style={styles.card} activeOpacity={0.8}>
-        {bannerImageUrl ? (
-          <Image
-            source={{ uri: bannerImageUrl }}
-            style={styles.bannerImage}
-            resizeMode="cover"
-          />
-        ) : null}
+        <Image
+          source={imageSource}
+          style={styles.bannerImage}
+          resizeMode="cover"
+          onError={() => {
+            console.log(`⚠️ Image failed to load, falling back to default for meeting ${meetingId}`);
+            setImageSource(DefaultMentorCardImage);
+          }}
+        />
         <View style={styles.headerBar}>
           <View style={styles.mentorNameContainer}>
             <Text style={styles.mentorName}>{mentor}</Text>
@@ -860,6 +871,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.06,
     shadowRadius: 12,
     elevation: 3,
+    overflow: "hidden", // Required for iOS to clip child images to borderRadius
   },
   headerBar: {
     flexDirection: "row",

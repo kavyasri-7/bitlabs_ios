@@ -12,6 +12,7 @@ type PortfolioCardProps = {
   backgroundColor?: string;
   borderColor?: string;
   scoreDetails?: any;
+  userRank?: number | string;
 };
 
 export const PortfolioCard: React.FC<PortfolioCardProps> = ({
@@ -23,6 +24,7 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
   backgroundColor = '#FFF5E6',
   borderColor = '#EA7B20',
   scoreDetails,
+  userRank = '--',
 }) => {
   const alternatePhone = profileData?.basicDetails?.alternatePhoneNumber || '';
   const email = profileData?.applicant?.email || '';
@@ -126,19 +128,30 @@ export const PortfolioCard: React.FC<PortfolioCardProps> = ({
         </View>
 
         <View style={styles.profileExtraDetails}>
-          <View style={styles.contactRow}>
+          {/* Middle: Contact details (Phone & Email) */}
+          <View style={styles.contactContainer}>
             <View style={styles.detailRow}>
               <Icon name="phone" size={18} color="#EA7B20" />
               <Text style={styles.detailText}>{alternatePhone || 'N/A'}</Text>
             </View>
-            <View style={styles.portfolioScoreDetails}>
+            <View style={styles.detailRow}>
+              <Icon name="email" size={18} color="#EA7B20" />
+              <Text style={styles.detailText} numberOfLines={1} ellipsizeMode="tail">{email || 'N/A'}</Text>
+            </View>
+          </View>
+
+          {/* Right: Score & Rank stacked vertically */}
+          <View style={styles.statsContainer}>
+            <View style={styles.statBox}>
               <Text style={styles.scoreLabel}>score</Text>
               <Text style={styles.scoreValue}>{dashboardScore ?? 0}</Text>
             </View>
-          </View>
-          <View style={styles.detailRow}>
-            <Icon name="email" size={18} color="#EA7B20" />
-            <Text style={styles.detailText} numberOfLines={1} ellipsizeMode="tail">{email || 'N/A'}</Text>
+            <View style={styles.statBox}>
+              <Text style={styles.rankLabel}>rank</Text>
+              <Text style={styles.rankValue}>
+                {userRank !== '--' && userRank !== 'Loading...' && userRank !== '' ? `#${userRank}` : userRank}
+              </Text>
+            </View>
           </View>
         </View>
       </View>
@@ -222,40 +235,56 @@ const styles = StyleSheet.create({
   },
   profileExtraDetails: {
     flex: 1,
-    marginLeft: 8,
-  },
-  contactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
-    flexWrap: 'wrap',
     justifyContent: 'space-between',
+    marginLeft: 8,
+  },
+  contactContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingRight: 8,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginRight: 12,
-    marginBottom: 6,
-    flex: 1,
+    marginVertical: 4,
   },
   detailText: {
-    fontSize: hp('1.3%'), // Consistent small text size
+    fontSize: hp('1.3%'),
     color: '#333',
     marginLeft: 6,
     fontFamily: 'PlusJakartaSans-Medium',
   },
-  portfolioScoreDetails: {
+  statsContainer: {
     alignItems: 'center',
-    marginLeft: 'auto',
+    justifyContent: 'center',
+    marginLeft: 12,
+    width: wp('15%'),
+  },
+  statBox: {
+    alignItems: 'center',
+    marginVertical: 4,
   },
   scoreLabel: {
-    fontSize: hp('1.3%'), // Consistent small text size
+    fontSize: hp('1.3%'),
     color: '#666',
     textTransform: 'lowercase',
     fontFamily: 'PlusJakartaSans-Medium',
   },
   scoreValue: {
-    fontSize: hp('2%'), // Consistent card title size
+    fontSize: hp('2.5%'),
+    color: '#1A1A1A',
+    fontFamily: 'PlusJakartaSans-Bold',
+  },
+  rankLabel: {
+    fontSize: hp('1.3%'),
+    color: '#EA7B20',
+    textTransform: 'lowercase',
+    fontFamily: 'PlusJakartaSans-Medium',
+  },
+  rankValue: {
+    fontSize: hp('2.5%'),
     color: '#1A1A1A',
     fontFamily: 'PlusJakartaSans-Bold',
   },

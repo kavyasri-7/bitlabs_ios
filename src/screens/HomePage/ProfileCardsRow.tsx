@@ -64,6 +64,8 @@ const ProfileCardsRow: React.FC = () => {
   const [blogsError, setBlogsError] = useState<string | null>(null);
   const [streakData, setStreakData] = useState<StreakDetails | null>(null);
   const [streakLoading, setStreakLoading] = useState(true);
+  const [userRank, setUserRank] = useState<number | string>('--');
+  const [rankLoading, setRankLoading] = useState(true);
 
   // Cache refs to prevent unnecessary refetching
   const videosCacheRef = useRef<{ data: any[]; timestamp: number } | null>(null);
@@ -289,12 +291,34 @@ const ProfileCardsRow: React.FC = () => {
     }
   }, [userId]);
 
+  // Fetch user rank from leaderboard API
+  const fetchUserRank = useCallback(async () => {
+    if (!userId || !userToken) return;
+    try {
+      setRankLoading(true);
+      console.log("🔄 [HOME PORTFOLIO] Fetching leaderboard for user rank via ProfileApiService...");
+      const result = await ProfileApiService.fetchLeaderboardRank(userId, userToken);
+      if (result.success) {
+        setUserRank(result.rank);
+        console.log("✅ [HOME PORTFOLIO] User rank fetched:", result.rank);
+      } else {
+        setUserRank('--');
+      }
+    } catch (err) {
+      console.error('❌ [HOME PORTFOLIO] Error fetching leaderboard rank:', err);
+      setUserRank('--');
+    } finally {
+      setRankLoading(false);
+    }
+  }, [userId, userToken]);
+
   // Initial fetch on mount
   useEffect(() => {
     fetchTechBuzzVideos();
     fetchBlogs();
     loadStreakDetails();
-  }, [fetchTechBuzzVideos, fetchBlogs, loadStreakDetails]);
+    fetchUserRank();
+  }, [fetchTechBuzzVideos, fetchBlogs, loadStreakDetails, fetchUserRank]);
 
   // Refresh on focus only if cache is expired
   useFocusEffect(
@@ -307,7 +331,8 @@ const ProfileCardsRow: React.FC = () => {
       if (!blogsCacheRef.current || (now - blogsCacheRef.current.timestamp) >= CACHE_DURATION) {
         fetchBlogs(false);
       }
-    }, [fetchTechBuzzVideos, fetchBlogs])
+      fetchUserRank();
+    }, [fetchTechBuzzVideos, fetchBlogs, fetchUserRank])
   );
 
 
@@ -412,6 +437,7 @@ const ProfileCardsRow: React.FC = () => {
         profileData={profileData}
         dashboardScore={totalScore ?? 0}
         userName={userName}
+        userRank={userRank}
         onExplore={() => navigation.navigate('Profile')}
         backgroundColor={cardColors[0].bg}
         borderColor={cardColors[0].border}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground, ActivityIndicator, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ImageBackground, ActivityIndicator, TouchableOpacity, ScrollView, TextInput } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '@models/Model';
@@ -55,6 +55,24 @@ const LMSMainPage = () => {
       progress: 75,
       image: require('../../assests/Images/backgrounds/interview_preparedness.jpeg'),
     },
+    {
+      id: 6,
+      name: "react.js",
+      progress: 75,
+      image: require('../../assests/Images/backgrounds/React-JS.png'),
+    },
+    {
+      id: 5,
+      name: 'javascript & es6',
+      progress: 75,
+      image: require('../../assests/Images/backgrounds/javascript.jpeg'),
+    },
+    {
+      id: 8,
+      name: 'java exceptions & algorithms',
+      progress: 75,
+      image: require('../../assests/Images/backgrounds/javaException.jpeg'),
+    },
     // {
     //   id: 8,
     //   name: "React Native",
@@ -64,6 +82,7 @@ const LMSMainPage = () => {
   ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch and sync course progress data (on mount, userId load, and screen focus)
   useEffect(() => {
@@ -155,27 +174,51 @@ const LMSMainPage = () => {
     });
   };
 
+  const filteredCourses = courses.filter(course =>
+    course.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <ImageBackground
       source={require("../../assests/Images/backgrounds/image.png")}
       style={styles.background}
     >
-      <ScrollView>
-        <View style={styles.container}>
-          {/* Custom Header */}
-          <View style={styles.header}>
-            <View style={styles.navHeaderRow}>
-              <TouchableOpacity
-                onPress={() => navigation.goBack()}
-                style={styles.navBackButton}
-              >
-                <MaterialIcon name="arrow-back" size={24} color="#000" />
-              </TouchableOpacity>
-              <Text style={styles.heading}>LMS Main Page</Text>
-              <View style={styles.navBackButtonPlaceholder} />
-            </View>
+      <View style={styles.container}>
+        {/* Custom Header */}
+        <View style={styles.header}>
+          <View style={styles.navHeaderRow}>
+            <TouchableOpacity
+              onPress={() => navigation.goBack()}
+              style={styles.navBackButton}
+            >
+              <MaterialIcon name="arrow-back" size={24} color="#000" />
+            </TouchableOpacity>
+            <Text style={styles.heading}>LMS Main Page</Text>
+            <View style={styles.navBackButtonPlaceholder} />
           </View>
+        </View>
 
+        {!loading && !error && (
+          <View style={styles.searchContainer}>
+            <MaterialIcon name="search" size={22} color="#666" style={styles.searchIcon} />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search courses..."
+              placeholderTextColor="#999"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              autoCapitalize="none"
+              autoCorrect={false}
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
+                <MaterialIcon name="close" size={20} color="#666" />
+              </TouchableOpacity>
+            )}
+          </View>
+        )}
+
+        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
           {loading ? (
             <View style={styles.centerContainer}>
               <ActivityIndicator size="large" color="#F5A623" />
@@ -187,19 +230,29 @@ const LMSMainPage = () => {
             </View>
           ) : (
             <View style={styles.coursesContainer}>
-              {courses.map((course) => (
-                <CourseCard
-                  key={course.id}
-                  courseName={course.name}
-                  progress={course.progress}
-                  imageSource={course.image}
-                  onPress={() => handleCoursePress(course.name, course.id, course.progress)}
-                />
-              ))}
+              {filteredCourses.length > 0 ? (
+                filteredCourses.map((course) => (
+                  <CourseCard
+                    key={course.id}
+                    courseName={course.name}
+                    progress={course.progress}
+                    imageSource={course.image}
+                    onPress={() => handleCoursePress(course.name, course.id, course.progress)}
+                  />
+                ))
+              ) : (
+                <View style={styles.noResultsContainer}>
+                  <MaterialIcon name="search-off" size={48} color="#ccc" />
+                  <Text style={styles.noResultsText}>No courses found</Text>
+                  <Text style={styles.noResultsSubtext}>
+                    We couldn't find any courses matching "{searchQuery}"
+                  </Text>
+                </View>
+              )}
             </View>
           )}
-        </View>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </ImageBackground>
   );
 };
@@ -263,6 +316,57 @@ const styles = StyleSheet.create({
   coursesContainer: {
     width: '100%',
     alignItems: 'center',
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginHorizontal: 16,
+    marginVertical: 12,
+    paddingHorizontal: 12,
+    height: 48,
+    borderWidth: 1,
+    borderColor: '#eee',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: '100%',
+    color: '#000',
+    fontSize: 15,
+  },
+  clearButton: {
+    padding: 4,
+  },
+  noResultsContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+  noResultsText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 12,
+    marginBottom: 4,
+  },
+  noResultsSubtext: {
+    fontSize: 14,
+    color: '#888',
+    textAlign: 'center',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingBottom: 20,
   },
 });
 

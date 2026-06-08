@@ -105,6 +105,25 @@ export const ProfileApiService = {
     }
   },
 
+  // Fetch applicant leaderboard rank
+  async fetchLeaderboardRank(userId: number, userToken: string) {
+    try {
+      const { data } = await apiClient.get(`/applicant-scores/leaderboard?limit=10000`, {
+        headers: { Authorization: `Bearer ${userToken}` },
+      });
+      const list = Array.isArray(data) ? data : (data?.items || data?.data || []);
+      const myEntry = list.find((e: any) => e && String(e.applicantId) === String(userId));
+      if (myEntry) {
+        const rank = list.indexOf(myEntry) + 1;
+        return { success: true, rank };
+      }
+      return { success: true, rank: '--' };
+    } catch (error: any) {
+      console.error('Failed to fetch leaderboard rank:', error);
+      return { success: false, rank: '--', error: error.response?.data || error.message };
+    }
+  },
+
   // Fetch summary
   async fetchSummary(userId: number, userToken: string) {
     try {
