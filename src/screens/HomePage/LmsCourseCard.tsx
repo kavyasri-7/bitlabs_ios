@@ -37,17 +37,15 @@ export const LmsCourseCard: React.FC<Props> = ({
 
   return (
     <View style={styles.wrapper}>
-      <TouchableOpacity
+      <View
         style={styles.imageContainer}
-        onPress={onPress}
-        activeOpacity={0.7}
       >
         <Image
           source={require("../../assests/Images/backgrounds/Lmslogo.png")}
           style={styles.lmsImage}
           resizeMode="contain"
         />
-      </TouchableOpacity>
+      </View>
 
       <LinearGradient
         colors={["#FBBB5C", "#E66A0E"]}
@@ -60,16 +58,12 @@ export const LmsCourseCard: React.FC<Props> = ({
         <View style={styles.innerCard}>
           <View style={styles.imagePlaceholder} />
 
-          <TouchableOpacity
-            style={styles.textContainer}
-            onPress={onPress}
-            activeOpacity={0.7}
-          >
+          <View style={styles.textContainer}>
             <Text style={styles.title}>
               Learn Grow Succeed -{" "}
               <Text style={styles.lmsCourses}>LMS Courses!</Text>
             </Text>
-          </TouchableOpacity>
+          </View>
         </View>
 
         <TouchableOpacity style={styles.button} onPress={onPress}>

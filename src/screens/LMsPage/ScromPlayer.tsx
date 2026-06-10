@@ -109,6 +109,44 @@ const COURSE_DATA: Record<string, any[]> = {
     { topic: "Working with Large Datasets", videos: [{ title: "Working with Large Datasets", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/WORKING+WITH+LARGE+DATASETS/index_lms.html" }] },
     { topic: "UML Diagrams", videos: [{ title: "UML Diagrams", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/java_exception_algorithms/UML+DIAGRAMS/index_lms.html" }] },
   ],
+  "java": [
+    { topic: "Problem solving Fundamentals", videos: [{ title: "Problem solving Fundamentals", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/Topic+1+PROBLEM+SOLVING+FUNDAMENTALS+-+Copy/index_lms.html" }] },
+    { topic: "Introduction to java", videos: [{ title: "Introduction to java", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/INTRODUCTION+TO+JAVA/index_lms.html" }] },
+    { topic: "Data Types", videos: [{ title: "Data Types", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/Topic+3+DATA+TYPES/index_lms.html" }] },
+    { topic: "Control Statements", videos: [{ title: "Control Statements", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/CONTROL+STATEMENTS/index_lms.html" }] },
+    { topic: "Arrays", videos: [{ title: "Arrays", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/ARRAYS/index_lms.html" }] },
+    { topic: "Java Classes and Objects", videos: [{ title: "Java Classes and Objects", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/JAVA+CLASS+AND+OBJECTS/index_lms.html" }] },
+    { topic: "Java Classes Members", videos: [{ title: "Java Classes Members", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/JAVA+CLASS+MEMBERS/index_lms.html" }] },
+    { topic: "Strings", videos: [{ title: "Strings", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/STRINGS/index_lms.html" }] },
+    { topic: "OOPS - part1", videos: [{ title: "OOPS - part1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/OOPS+-+PART1/index_lms.html" }] },
+    { topic: "OOPS - part2", videos: [{ title: "OOPS - part2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/OOPS+–+PART2/index_lms.html" }] },
+    { topic: "Data Structures", videos: [{ title: "Data Structures", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/DATA+STRUCTURES/index_lms.html" }] },
+    { topic: "Collections in java - 1", videos: [{ title: "Collections in java - 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/COLLECTIONS+IN+JAVA+–+1/index_lms.html" }] },
+    { topic: "Collections in java - 2", videos: [{ title: "Collections in java - 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/javabasics/COLLECTIONS+IN+JAVA+–+1/index_lms.html" }] },
+
+  ],
+  "spring boot": [
+    { topic: "Introduction to Hibernate", videos: [{ title: "Introduction to Hibernate", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Hibernate/index_lms.html" }] },
+    { topic: "Hibernate Configuration", videos: [{ title: "Hibernate Configuration", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Configuration/index_lms.html" }] },
+    { topic: "Hibernate CRUD Operations", videos: [{ title: "Hibernate CRUD Operations", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+CRUD+Operations/index_lms.html" }] },
+    { topic: "Hibernate Caching", videos: [{ title: "Hibernate Caching", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Caching/index_lms.html" }] },
+    { topic: "Hibernate Collection Mapping", videos: [{ title: "Hibernate Collection Mapping", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Collection+Mapping/index_lms.html" }] },
+    { topic: "Hibernate Association Mapping", videos: [{ title: "Hibernate Association Mapping", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Association+Mapping/index_lms.html" }] },
+    { topic: "Hibernate Query Language", videos: [{ title: "Hibernate Query Language", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Hibernate+Query+Language/index_lms.html" }] },
+    { topic: "JUnit Testing", videos: [{ title: "JUnit Testing", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/JUnit+Testing/index_lms.html" }] },
+    { topic: "Introduction to Spring Framework", videos: [{ title: "Introduction to Spring Framework", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Spring+_Framework/index_lms.html" }] },
+    { topic: "Spring with Hibernate", videos: [{ title: "Spring with Hibernate", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+with+Hibernate/index_lms.html" }] },
+    { topic: "Spring with Hibernate Integration", videos: [{ title: "Spring with Hibernate Integration", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+with+Hibernate/index_lms.html" }] },
+    { topic: "Annotations in Spring MVC Framework", videos: [{ title: "Annotations in Spring MVC Framework", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Annotations+in+Spring+MVC+Framework/index_lms.html" }] },
+    { topic: "Introduction to Spring Boot", videos: [{ title: "Introduction to Spring Boot", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Spring+_Framework/index_lms.html" }] },
+    { topic: "Introduction to Web Services", videos: [{ title: "Introduction to Web Services", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Web+Services/index_lms.html" }] },
+    { topic: "CRUD Operations in Spring Boot Using REST API", videos: [{ title: "CRUD Operations in Spring Boot Using REST API", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/CRUD+Operations+in+Spring+Boot+Using+REST+API/index_lms.html" }] },
+    { topic: "Spring Security Part 1", videos: [{ title: "Spring Security Part 1", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+Security+Part+1/index_lms.html" }] },
+    { topic: "Spring Security Part 2", videos: [{ title: "Spring Security Part 2", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+Security+Part+1/index_lms.html" }] },
+    { topic: "Spring Boot with JSON Web Token (JWT)", videos: [{ title: "Spring Boot with JSON Web Token (JWT)", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Spring+Boot+with+JSON+Web+Token+(JWT)%C2%A0/index_lms.html" }] },
+    { topic: "Introduction to Swagger", videos: [{ title: "Introduction to Swagger", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Introduction+to+Swagger/index_lms.html" }] },
+    { topic: "Git and GitHub", videos: [{ title: "Git and GitHub", url: "https://bitlabs-app.s3.ap-south-1.amazonaws.com/Staging/ScromPackages/springboot/Git+and+GitHub/index_lms.html" }] },
+  ],
 
 };
 
@@ -118,11 +156,12 @@ const getCourseId = (name: string): number => {
     'python': 2,
     'java': 3,
     'sql': 4,
-    'react.js': 6,
-    'spring boot': 9,
-    'interview preparedness': 7,
     'javascript & es6': 5,
+    'react.js': 6,
+    'interview preparedness': 7,
     'java exceptions & algorithms': 8,
+    'spring boot': 9,
+
   };
   return courseMap[name.toLowerCase()] || 0;
 };

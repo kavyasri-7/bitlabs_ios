@@ -73,6 +73,18 @@ const LMSMainPage = () => {
       progress: 75,
       image: require('../../assests/Images/backgrounds/javaException.jpeg'),
     },
+    {
+      id: 3,
+      name: 'java',
+      progress: 75,
+      image: require('../../assests/Images/backgrounds/Java.png'),
+    },
+    {
+      id: 9,
+      name: 'spring boot',
+      progress: 75,
+      image: require('../../assests/Images/backgrounds/Springboot.png'),
+    },
     // {
     //   id: 8,
     //   name: "React Native",
