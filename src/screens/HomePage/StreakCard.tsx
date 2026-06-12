@@ -35,8 +35,8 @@ export const StreakCard: React.FC<StreakCardProps> = ({
   return (
     <LinearGradient
       colors={['#FDEBD0', '#F5CBA7']}
-      start={{x: 0, y: 0}}
-      end={{x: 1, y: 1}}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 1, y: 1 }}
       style={styles.card}>
       {/* Top Row */}
       <View style={styles.topRow}>
@@ -76,8 +76,8 @@ export const StreakCard: React.FC<StreakCardProps> = ({
                       {status === 'achieved'
                         ? '✓'
                         : status === 'missed'
-                        ? '✗'
-                        : '–'}
+                          ? '✗'
+                          : '–'}
                     </Text>
                   </View>
                 </View>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     borderColor: '#E8A854',
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 1},
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
   },

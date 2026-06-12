@@ -47,7 +47,7 @@ import LMSMainPage from '../screens/LMsPage/LMSMainPage';
 import ScormPlayer from '../screens/LMsPage/ScromPlayer';
 
 import { toastConfig } from '@components/Toast/toast_config';
-import AskNewtonButton from '@components/FixedButtons/AskNewtonButton';
+// import AskNewtonButton from '@components/FixedButtons/AskNewtonButton';
 import SplashScreen from '../screens/SplashScreen/SplashScreen';
 import SafeAreaWrapper from '../components/SafeAreaWrapper/SafeAreaWrapper';
 // // {Changed}
@@ -543,7 +543,7 @@ const AppWithProfileProvider = () => {
                 />
 
                 {/* {changed} */}
-                {!loading && profileChecked && <AskNewtonButton />}
+                {/* {!loading && profileChecked && <AskNewtonButton />} */}
               </View>
             </NavigationContainer>
             <Toast config={toastConfig} />

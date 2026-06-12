@@ -200,7 +200,7 @@ function Dashboard() {
 
               </View>
 
-              {/* Streak Quiz integration */}
+              {/* StreakQuiz integration */}
               {/* {streakData && !streakData.attemptedToday && !quizDone && (
                 <StreakQuiz
                   onComplete={() => setQuizDone(true)}
