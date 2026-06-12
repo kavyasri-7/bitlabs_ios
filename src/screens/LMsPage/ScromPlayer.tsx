@@ -148,6 +148,7 @@ const COURSE_DATA: Record<string, any[]> = {
     { topic: "Git and GitHub", videos: [{ title: "Git and GitHub", url: "https://d1sq67t1c2pewz.cloudfront.net/Staging/ScromPackages/springboot/Git+and+GitHub/index_lms.html" }] },
   ],
 
+
 };
 
 const getCourseId = (name: string): number => {
@@ -161,7 +162,6 @@ const getCourseId = (name: string): number => {
     'interview preparedness': 7,
     'java exceptions & algorithms': 8,
     'spring boot': 9,
-
   };
   return courseMap[name.toLowerCase()] || 0;
 };
@@ -470,11 +470,11 @@ const ScormPlayer = () => {
 
         // Inject into WebView if it's already loaded
         const injectScript = `
-if (window.API) {
-window.scormData = ${JSON.stringify(parsedData)};
-console.log('Restored SCORM data:', window.scormData);
-}
-`;
+          if (window.API) {
+            window.scormData = ${JSON.stringify(parsedData)};
+            console.log('Restored SCORM data:', window.scormData);
+          }
+        `;
         webViewRef.current?.injectJavaScript(injectScript);
       }
     } catch (e) {
@@ -603,29 +603,13 @@ console.log('Restored SCORM data:', window.scormData);
       activeSlideRef.current = 1;
       setActiveSlide(1);
       setVisitedSlides(new Set());
-      setTotalCount(0);
-      totalCountRef.current = 0;
 
       // 1. Fetch manifest to get real subtopic count
       let subtopicCount = 0;
       if (currentUrl && currentUrl.startsWith('http')) {
         subtopicCount = await ScormService.countSubtopicsFromUrl(currentUrl);
       }
-
-      // Try to load cached total count from AsyncStorage for this topic
-      let cachedTotal = 0;
-      try {
-        const progressKey = `articulate_course_${courseId}_topic_${idx}_progress`;
-        const raw = await AsyncStorage.getItem(progressKey);
-        if (raw) {
-          const cached = JSON.parse(raw);
-          cachedTotal = cached.total || 0;
-        }
-      } catch (e) {
-        console.log('Error reading cached progress total:', e);
-      }
-
-      const finalTotal = subtopicCount > 0 ? subtopicCount : (cachedTotal > 0 ? cachedTotal : 0);
+      const finalTotal = subtopicCount > 1 ? subtopicCount : (totalCount > 1 ? totalCount : 0);
       if (!cancelled) {
         setTotalCount(finalTotal);
         totalCountRef.current = finalTotal;
@@ -705,12 +689,6 @@ console.log('Restored SCORM data:', window.scormData);
               'cmi.core.lesson_status': dbProgress >= 100 ? 'completed' : 'incomplete'
             };
           }
-
-          // If the topic is completed, force lesson_location to "1" so they can replay/watch the video
-          if (dbProgress >= 100) {
-            console.log('🔄 [SCORM] Topic is completed. Forcing lesson_location to "1" for replay.');
-            activeScormData['cmi.core.lesson_location'] = '1';
-          }
         }
 
         if (Object.keys(activeScormData).length > 0 && !cancelled) {
@@ -763,217 +741,217 @@ console.log('Restored SCORM data:', window.scormData);
   };
 
   const injectedJS = `
-(function() {
-var scormData = ${JSON.stringify(scormData)};
-var isInitialized = false;
-var hasUserInteracted = false;
-window.parent = window;
-window.top = window;
+    (function() {
+      var scormData = ${JSON.stringify(scormData)};
+      var isInitialized = false;
+      var hasUserInteracted = false;
+      window.parent = window;
+      window.top = window;
+      
+      // User interaction tracking
+      document.addEventListener('click', function() {
+        hasUserInteracted = true;
+        console.log('User interaction detected');
+      }, { once: false });
+      
+      document.addEventListener('touchstart', function() {
+        hasUserInteracted = true;
+        console.log('Touch interaction detected');
+      }, { once: false });
+      
+      // Simple audio enable function
+      function enableAudio() {
+        console.log('Enabling audio playback');
+        var audioElements = document.querySelectorAll('audio, video');
+        audioElements.forEach(function(element) {
+          element.muted = false;
+          element.volume = 1.0;
+          element.play().then(function() {
+            console.log('Audio playing successfully:', element.src);
+          }).catch(function(error) {
+            console.log('Audio play failed:', error);
+          });
+        });
+      }
+      
+      // Auto-unmute and play after user interaction
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          var audioElements = document.querySelectorAll('audio, video');
+          audioElements.forEach(function(element) {
+            element.muted = false;
+            element.volume = 1.0;
+            console.log('Audio element found and unmuted:', element.src || element);
+          });
+          
+          if (hasUserInteracted) {
+            enableAudio();
+          } else {
+            console.log('Waiting for user interaction to enable audio');
+            // Enable audio on first interaction
+            var enableAudioOnce = function() {
+              hasUserInteracted = true;
+              enableAudio();
+              document.removeEventListener('click', enableAudioOnce);
+              document.removeEventListener('touchstart', enableAudioOnce);
+            };
+            document.addEventListener('click', enableAudioOnce, { once: true });
+            document.addEventListener('touchstart', enableAudioOnce, { once: true });
+          }
+        }, 2000);
+      });
+      
+      // Unified SCORM 1.2 / 2004 API implementation
+      var scormAPI = {
+        LMSInitialize: function() {
+          isInitialized = true;
+          console.log('SCORM 1.2 API Initialized');
+          if (window.scormData) {
+            scormData = Object.assign(scormData, window.scormData);
+          }
+          return "true";
+        },
+        Initialize: function() {
+          return scormAPI.LMSInitialize();
+        },
 
-// User interaction tracking
-document.addEventListener('click', function() {
-hasUserInteracted = true;
-console.log('User interaction detected');
-}, { once: false });
+        LMSSetValue: function(key, value) {
+          if (!isInitialized) return "false";
+          scormData[key] = value;
+          console.log('SCORM SetValue:', key, value);
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({ type: 'setValue', key: key, value: value })
+            );
+          }
+          return "true";
+        },
+        SetValue: function(key, value) {
+          return scormAPI.LMSSetValue(key, value);
+        },
 
-document.addEventListener('touchstart', function() {
-hasUserInteracted = true;
-console.log('Touch interaction detected');
-}, { once: false });
+        LMSGetValue: function(key) {
+          if (!isInitialized) return "";
+          var val = scormData[key] || "";
+          console.log('SCORM GetValue:', key, val);
+          return val;
+        },
+        GetValue: function(key) {
+          return scormAPI.LMSGetValue(key);
+        },
 
-// Simple audio enable function
-function enableAudio() {
-console.log('Enabling audio playback');
-var audioElements = document.querySelectorAll('audio, video');
-audioElements.forEach(function(element) {
-element.muted = false;
-element.volume = 1.0;
-element.play().then(function() {
-console.log('Audio playing successfully:', element.src);
-}).catch(function(error) {
-console.log('Audio play failed:', error);
-});
-});
-}
+        LMSCommit: function() {
+          if (!isInitialized) return "false";
+          console.log('SCORM Commit');
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({ type: 'commit', data: scormData })
+            );
+          }
+          return "true";
+        },
+        Commit: function() {
+          return scormAPI.LMSCommit();
+        },
 
-// Auto-unmute and play after user interaction
-document.addEventListener('DOMContentLoaded', function() {
-setTimeout(function() {
-var audioElements = document.querySelectorAll('audio, video');
-audioElements.forEach(function(element) {
-element.muted = false;
-element.volume = 1.0;
-console.log('Audio element found and unmuted:', element.src || element);
-});
+        LMSFinish: function() {
+          if (!isInitialized) return "false";
+          console.log('SCORM Finish');
+          if (window.ReactNativeWebView) {
+            window.ReactNativeWebView.postMessage(
+              JSON.stringify({ type: 'finish', data: scormData })
+            );
+          }
+          return "true";
+        },
+        Finish: function() {
+          return scormAPI.LMSFinish();
+        },
+        Terminate: function() {
+          return scormAPI.LMSFinish();
+        },
 
-if (hasUserInteracted) {
-enableAudio();
-} else {
-console.log('Waiting for user interaction to enable audio');
-// Enable audio on first interaction
-var enableAudioOnce = function() {
-hasUserInteracted = true;
-enableAudio();
-document.removeEventListener('click', enableAudioOnce);
-document.removeEventListener('touchstart', enableAudioOnce);
-};
-document.addEventListener('click', enableAudioOnce, { once: true });
-document.addEventListener('touchstart', enableAudioOnce, { once: true });
-}
-}, 2000);
-});
+        LMSGetLastError: function() {
+          return isInitialized ? "0" : "101";
+        },
+        GetLastError: function() {
+          return scormAPI.LMSGetLastError();
+        },
 
-// Unified SCORM 1.2 / 2004 API implementation
-var scormAPI = {
-LMSInitialize: function() {
-isInitialized = true;
-console.log('SCORM 1.2 API Initialized');
-if (window.scormData) {
-scormData = Object.assign(scormData, window.scormData);
-}
-return "true";
-},
-Initialize: function() {
-return scormAPI.LMSInitialize();
-},
+        LMSGetErrorString: function(errorCode) {
+          return "No error";
+        },
+        GetErrorString: function(errorCode) {
+          return "No error";
+        },
 
-LMSSetValue: function(key, value) {
-if (!isInitialized) return "false";
-scormData[key] = value;
-console.log('SCORM SetValue:', key, value);
-if (window.ReactNativeWebView) {
-window.ReactNativeWebView.postMessage(
-JSON.stringify({ type: 'setValue', key: key, value: value })
-);
-}
-return "true";
-},
-SetValue: function(key, value) {
-return scormAPI.LMSSetValue(key, value);
-},
+        LMSGetDiagnostic: function(errorCode) {
+          return "No error";
+        },
+        GetDiagnostic: function(errorCode) {
+          return "No error";
+        }
+      };
 
-LMSGetValue: function(key) {
-if (!isInitialized) return "";
-var val = scormData[key] || "";
-console.log('SCORM GetValue:', key, val);
-return val;
-},
-GetValue: function(key) {
-return scormAPI.LMSGetValue(key);
-},
+      window.API = scormAPI;
+      window.API_1484_11 = scormAPI;
 
-LMSCommit: function() {
-if (!isInitialized) return "false";
-console.log('SCORM Commit');
-if (window.ReactNativeWebView) {
-window.ReactNativeWebView.postMessage(
-JSON.stringify({ type: 'commit', data: scormData })
-);
-}
-return "true";
-},
-Commit: function() {
-return scormAPI.LMSCommit();
-},
-
-LMSFinish: function() {
-if (!isInitialized) return "false";
-console.log('SCORM Finish');
-if (window.ReactNativeWebView) {
-window.ReactNativeWebView.postMessage(
-JSON.stringify({ type: 'finish', data: scormData })
-);
-}
-return "true";
-},
-Finish: function() {
-return scormAPI.LMSFinish();
-},
-Terminate: function() {
-return scormAPI.LMSFinish();
-},
-
-LMSGetLastError: function() {
-return isInitialized ? "0" : "101";
-},
-GetLastError: function() {
-return scormAPI.LMSGetLastError();
-},
-
-LMSGetErrorString: function(errorCode) {
-return "No error";
-},
-GetErrorString: function(errorCode) {
-return "No error";
-},
-
-LMSGetDiagnostic: function(errorCode) {
-return "No error";
-},
-GetDiagnostic: function(errorCode) {
-return "No error";
-}
-};
-
-window.API = scormAPI;
-window.API_1484_11 = scormAPI;
-
-// Smart window.GetPlayer hook to intercept Articulate custom variables and trigger scripts
-(function() {
-var originalGetPlayer = window.GetPlayer;
-window.GetPlayer = function() {
-var player = null;
-if (originalGetPlayer) {
-player = originalGetPlayer();
-} else if (window.g_player) {
-player = window.g_player;
-}
-
-if (!player) {
-for (var i = 0; i < window.frames.length; i++) {
-try {
-if (window.frames[i].GetPlayer) {
-player = window.frames[i].GetPlayer();
-break;
-}
-} catch(e) {}
-}
-}
-
-if (player) {
-if (player.SetVar && !player.SetVar.isIntercepted) {
-var originalSetVar = player.SetVar;
-player.SetVar = function(name, val) {
-console.log('Intercepted player.SetVar:', name, val);
-if (window.ReactNativeWebView) {
-window.ReactNativeWebView.postMessage(
-JSON.stringify({ type: 'setValue', key: 'player_var_' + name, value: val })
-);
-}
-return originalSetVar.apply(player, arguments);
-};
-player.SetVar.isIntercepted = true;
-}
-return player;
-}
-
-return {
-GetVar: function(name) { return window.scormData ? window.scormData[name] : ""; },
-SetVar: function(name, val) { 
-if (window.scormData) window.scormData[name] = val; 
-if (window.ReactNativeWebView) {
-window.ReactNativeWebView.postMessage(
-JSON.stringify({ type: 'setValue', key: 'player_var_' + name, value: val })
-);
-}
-}
-};
-};
-})();
-
-console.log('SCORM API injected successfully');
-})();
-`;
+      // Smart window.GetPlayer hook to intercept Articulate custom variables and trigger scripts
+      (function() {
+        var originalGetPlayer = window.GetPlayer;
+        window.GetPlayer = function() {
+          var player = null;
+          if (originalGetPlayer) {
+            player = originalGetPlayer();
+          } else if (window.g_player) {
+            player = window.g_player;
+          }
+          
+          if (!player) {
+            for (var i = 0; i < window.frames.length; i++) {
+              try {
+                if (window.frames[i].GetPlayer) {
+                  player = window.frames[i].GetPlayer();
+                  break;
+                }
+              } catch(e) {}
+            }
+          }
+          
+          if (player) {
+            if (player.SetVar && !player.SetVar.isIntercepted) {
+              var originalSetVar = player.SetVar;
+              player.SetVar = function(name, val) {
+                console.log('Intercepted player.SetVar:', name, val);
+                if (window.ReactNativeWebView) {
+                  window.ReactNativeWebView.postMessage(
+                    JSON.stringify({ type: 'setValue', key: 'player_var_' + name, value: val })
+                  );
+                }
+                return originalSetVar.apply(player, arguments);
+              };
+              player.SetVar.isIntercepted = true;
+            }
+            return player;
+          }
+          
+          return {
+            GetVar: function(name) { return window.scormData ? window.scormData[name] : ""; },
+            SetVar: function(name, val) { 
+              if (window.scormData) window.scormData[name] = val; 
+              if (window.ReactNativeWebView) {
+                window.ReactNativeWebView.postMessage(
+                  JSON.stringify({ type: 'setValue', key: 'player_var_' + name, value: val })
+                );
+              }
+            }
+          };
+        };
+      })();
+      
+      console.log('SCORM API injected successfully');
+    })();
+  `;
 
   const handleMessage = (event: any) => {
     try {
@@ -1131,7 +1109,6 @@ console.log('SCORM API injected successfully');
 
       {/* WebView Player */}
       <WebView
-        key={`scorm-player-${selectedTopicIndex}`}
         ref={webViewRef}
         source={{
           uri: currentUrl || 'https://your-aws-url/index.html'
@@ -1158,17 +1135,17 @@ console.log('SCORM API injected successfully');
           console.log('SCORM Loaded - triggering audio enable and setting progress');
           setTimeout(() => {
             const script = `
-var audioElements = document.querySelectorAll('audio, video');
-audioElements.forEach(function(element) {
-element.muted = false;
-element.volume = 1.0;
-if (element.play) {
-element.play().catch(function(error) {
-console.log('Post-load audio failed:', error);
-});
-}
-});
-`;
+              var audioElements = document.querySelectorAll('audio, video');
+              audioElements.forEach(function(element) {
+                element.muted = false;
+                element.volume = 1.0;
+                if (element.play) {
+                  element.play().catch(function(error) {
+                    console.log('Post-load audio failed:', error);
+                  });
+                }
+              });
+            `;
             webViewRef.current?.injectJavaScript(script);
           }, 3000);
         }}
@@ -1191,12 +1168,7 @@ console.log('Post-load audio failed:', error);
       {/* Sidebar Drawer */}
       <Animated.View style={[styles.sidebar, { transform: [{ translateX: slideAnim }] }]}>
         <View style={styles.sidebarHeader}>
-          <View style={styles.sidebarHeaderRow}>
-            <TouchableOpacity onPress={toggleSidebar} style={styles.sidebarBackButton}>
-              <Ionicons name="arrow-back" size={24} color="#000" />
-            </TouchableOpacity>
-            <Text style={styles.sidebarTitle}>{courseName}</Text>
-          </View>
+          <Text style={styles.sidebarTitle}>{courseName}</Text>
           <View style={styles.overallProgressContainer}>
             <View style={[styles.overallProgressFill, { width: `${courseContent.length > 0 ? Math.round(Object.values(topicProgress).reduce((a, b) => a + b, 0) / courseContent.length) : 0}%` }]} />
           </View>
@@ -1329,15 +1301,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
-  },
-  sidebarHeaderRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 12,
-  },
-  sidebarBackButton: {
-    marginRight: 10,
-    padding: 4,
   },
   sidebarTitle: {
     fontSize: 18,

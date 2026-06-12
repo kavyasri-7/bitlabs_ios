@@ -201,12 +201,12 @@ function Dashboard() {
               </View>
 
               {/* StreakQuiz integration */}
-              {/* {streakData && !streakData.attemptedToday && !quizDone && (
+              {streakData && !streakData.attemptedToday && !quizDone && (
                 <StreakQuiz
                   onComplete={() => setQuizDone(true)}
                   onSkip={() => setQuizDone(true)}
                 />
-              )} */}
+              )}
 
               {/* <AskNewtonCard
                 botImage={require("../../assests/Images/Asknewton/robo.png")}

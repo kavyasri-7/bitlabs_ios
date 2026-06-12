@@ -12,6 +12,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList, 'ScormPlayer'>;
 const LMSMainPage = () => {
   const navigation = useNavigation<NavigationProp>();
   const { userId } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
   const [courses, setCourses] = useState([
     {
       id: 1,
@@ -63,25 +64,25 @@ const LMSMainPage = () => {
     },
     {
       id: 5,
-      name: 'javascript & es6',
+      name: "javascript & es6",
       progress: 75,
       image: require('../../assests/Images/backgrounds/javascript.jpeg'),
     },
     {
-      id: 8,
-      name: 'java exceptions & algorithms',
-      progress: 75,
-      image: require('../../assests/Images/backgrounds/javaException.jpeg'),
-    },
-    {
       id: 3,
-      name: 'java',
+      name: "java",
       progress: 75,
       image: require('../../assests/Images/backgrounds/Java.png'),
     },
     {
+      id: 8,
+      name: "java exceptions & algorithms",
+      progress: 75,
+      image: require('../../assests/Images/backgrounds/javaException.jpeg'),
+    },
+    {
       id: 9,
-      name: 'spring boot',
+      name: "spring boot",
       progress: 75,
       image: require('../../assests/Images/backgrounds/Springboot.png'),
     },
@@ -94,7 +95,6 @@ const LMSMainPage = () => {
   ]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
 
   // Fetch and sync course progress data (on mount, userId load, and screen focus)
   useEffect(() => {
@@ -186,10 +186,6 @@ const LMSMainPage = () => {
     });
   };
 
-  const filteredCourses = courses.filter(course =>
-    course.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
     <ImageBackground
       source={require("../../assests/Images/backgrounds/image.png")}
@@ -210,27 +206,18 @@ const LMSMainPage = () => {
           </View>
         </View>
 
-        {!loading && !error && (
-          <View style={styles.searchContainer}>
-            <MaterialIcon name="search" size={22} color="#666" style={styles.searchIcon} />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Search courses..."
-              placeholderTextColor="#999"
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              autoCapitalize="none"
-              autoCorrect={false}
-            />
-            {searchQuery.length > 0 && (
-              <TouchableOpacity onPress={() => setSearchQuery('')} style={styles.clearButton}>
-                <MaterialIcon name="close" size={20} color="#666" />
-              </TouchableOpacity>
-            )}
-          </View>
-        )}
+        <View style={styles.searchContainer}>
+          <MaterialIcon name="search" size={24} color="#666" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search courses..."
+            placeholderTextColor="#999"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+          />
+        </View>
 
-        <ScrollView keyboardShouldPersistTaps="handled" contentContainerStyle={styles.scrollContent}>
+        <ScrollView>
           {loading ? (
             <View style={styles.centerContainer}>
               <ActivityIndicator size="large" color="#F5A623" />
@@ -242,25 +229,15 @@ const LMSMainPage = () => {
             </View>
           ) : (
             <View style={styles.coursesContainer}>
-              {filteredCourses.length > 0 ? (
-                filteredCourses.map((course) => (
-                  <CourseCard
-                    key={course.id}
-                    courseName={course.name}
-                    progress={course.progress}
-                    imageSource={course.image}
-                    onPress={() => handleCoursePress(course.name, course.id, course.progress)}
-                  />
-                ))
-              ) : (
-                <View style={styles.noResultsContainer}>
-                  <MaterialIcon name="search-off" size={48} color="#ccc" />
-                  <Text style={styles.noResultsText}>No courses found</Text>
-                  <Text style={styles.noResultsSubtext}>
-                    We couldn't find any courses matching "{searchQuery}"
-                  </Text>
-                </View>
-              )}
+              {courses.filter(course => course.name.toLowerCase().includes(searchQuery.toLowerCase())).map((course) => (
+                <CourseCard
+                  key={course.id}
+                  courseName={course.name}
+                  progress={course.progress}
+                  imageSource={course.image}
+                  onPress={() => handleCoursePress(course.name, course.id, course.progress)}
+                />
+              ))}
             </View>
           )}
         </ScrollView>
@@ -303,6 +280,32 @@ const styles = StyleSheet.create({
     flex: 1,
     textAlign: 'center',
   },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginTop: 16,
+    marginBottom: 8,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    height: 48,
+    fontSize: 16,
+    color: '#333',
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -328,57 +331,6 @@ const styles = StyleSheet.create({
   coursesContainer: {
     width: '100%',
     alignItems: 'center',
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginHorizontal: 16,
-    marginVertical: 12,
-    paddingHorizontal: 12,
-    height: 48,
-    borderWidth: 1,
-    borderColor: '#eee',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
-    elevation: 2,
-  },
-  searchIcon: {
-    marginRight: 8,
-  },
-  searchInput: {
-    flex: 1,
-    height: '100%',
-    color: '#000',
-    fontSize: 15,
-  },
-  clearButton: {
-    padding: 4,
-  },
-  noResultsContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 40,
-    paddingHorizontal: 20,
-  },
-  noResultsText: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
-    marginTop: 12,
-    marginBottom: 4,
-  },
-  noResultsSubtext: {
-    fontSize: 14,
-    color: '#888',
-    textAlign: 'center',
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 20,
   },
 });
 
