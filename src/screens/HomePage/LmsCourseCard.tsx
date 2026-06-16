@@ -67,7 +67,7 @@ export const LmsCourseCard: React.FC<Props> = ({
         </View>
 
         <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text style={styles.buttonText}>Explore Courses</Text>
+          <Text style={styles.buttonText}>Get Started</Text>
         </TouchableOpacity>
       </LinearGradient>
     </View>

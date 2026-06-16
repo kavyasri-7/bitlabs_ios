@@ -23,13 +23,13 @@ import {
   ImageBackground,
 } from 'react-native';
 
-// import { AskNewtonCard } from './AskNewton';
 import { LmsCourseCard } from './LmsCourseCard';
 import ProfileCardsRow from './ProfileCardsRow';
+import LinearGradient from 'react-native-linear-gradient';
 import { useProfilePhoto } from '@context/ProfilePhotoContext';
 import { ProfileApiService } from '@services/profile/ProfileApiService';
-import { fetchStreakDetails, StreakDetails } from '@services/streak/StreakService';
 import { StreakQuiz } from './StreakQuiz';
+import { useStreak, StreakProvider } from '@context/StreakContext';
 const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
 // const baseScale = screenWidth < screenHeight ? screenWidth : screenHeight;
@@ -56,7 +56,7 @@ function Dashboard() {
   const { verifiedStatus, isLoading, jobCounts, refreshScore } = useContext(UserContext);
   const route = useRoute<HomeScreenRouteProp>(); // Handle route params
   const [hasFetched, setHasFetched] = useState(false);
-  const [streakData, setStreakData] = useState<StreakDetails | null>(null);
+  const { streakData, streakLoading, refreshStreakData } = useStreak();
   const [quizDone, setQuizDone] = useState(false);
 
   useFocusEffect(
@@ -131,15 +131,7 @@ function Dashboard() {
     refreshJobCounts();
     refreshVerifiedStatus();
     await fetchUserName();
-    if (userId) {
-      try {
-        const data = await fetchStreakDetails(userId);
-        console.log("Home component - Streak Details Success:", data);
-        setStreakData(data);
-      } catch (err) {
-        console.error('Error fetching streak details in Home:', err);
-      }
-    }
+    // Streak data is now managed by StreakContext
     if (refreshScore) {
       await refreshScore();
     }
@@ -198,21 +190,36 @@ function Dashboard() {
                 </View>
 
 
+                {/* <TouchableOpacity
+                  style={{ flex: 1, padding: 10, borderRadius: 8, marginRight: 16, alignItems: 'center', justifyContent: 'center', height: 55 }}
+                  onPress={() => navigation.navigate('LMSMainPage')}
+                >
+                  <LinearGradient
+                    colors={["#FBBB5C", "#E66A0E"]}
+                    start={{ x: 1, y: 0 }}
+                    end={{ x: 0, y: 1 }}
+                    useAngle={true}
+                    angle={225}
+                    style={styles.cardGradient}
+                  >
+                    <Text style={{ color: 'white', height: 20 }}>LMS</Text>
+                  </LinearGradient>
+                </TouchableOpacity> */}
+
               </View>
 
-              {/* StreakQuiz integration */}
-              {streakData && !streakData.attemptedToday && !quizDone && (
+              {/* Streak Quiz integration */}
+              {streakData && !streakData.attemptedToday && !quizDone && userId && (
                 <StreakQuiz
-                  onComplete={() => setQuizDone(true)}
+                  onComplete={async () => {
+                    setQuizDone(true);
+                    // Refresh streak data after completion using context
+                    await refreshStreakData();
+                  }}
                   onSkip={() => setQuizDone(true)}
+                  userId={userId}
                 />
               )}
-
-              {/* <AskNewtonCard
-                botImage={require("../../assests/Images/Asknewton/robo.png")}
-                handleRedirect3={() => navigation.navigate("InterviewPreparation")}
-                loading={false}
-              /> */}
 
               <LmsCourseCard
                 onPress={() => navigation.navigate('LMSMainPage')}
@@ -230,6 +237,16 @@ function Dashboard() {
 
   );
 }
+
+// Wrap Dashboard with StreakProvider
+const DashboardWithStreak: React.FC = () => {
+  const { userId } = useAuth();
+  return (
+    <StreakProvider userId={userId}>
+      <Dashboard />
+    </StreakProvider>
+  );
+};
 
 const styles = StyleSheet.create({
   background: {
@@ -428,4 +445,4 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   },
 });
-export default Dashboard;
+export default DashboardWithStreak;

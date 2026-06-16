@@ -189,6 +189,9 @@ const LandingPage = () => {
                   setLoginUserName(text.replace(/\s/g, ''));
                   resetLoginErrors('username');
                 }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
                 allowFontScaling={false}
               />
               {loginErrors.username && (
@@ -280,6 +283,9 @@ const LandingPage = () => {
                   setSignupEmail(text.replace(/\s/g, ''));
                   handleChange('email', text);
                 }}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardType="email-address"
                 allowFontScaling={false}
               />
               {signUpErrors.email && <Text style={styles.errorText}>{signUpErrors.email}</Text>}

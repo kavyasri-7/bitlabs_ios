@@ -98,7 +98,7 @@ const ApplicantHackathonDetails = () => {
       e.preventDefault();
       // Navigate to BottomTab with Arena screen and tab parameter
       // This preserves the tab state (e.g., if user was on "ACTIVE", they return to "ACTIVE")
-      navigation.navigate('BottomTab' as any, { screen: 'Arena', params: { tab: tabToUse } } as any);
+      navigation.navigate('BottomTab' as any, { screen: 'Hackathon', params: { tab: tabToUse } } as any);
     });
 
     return unsubscribe;

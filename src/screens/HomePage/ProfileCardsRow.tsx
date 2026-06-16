@@ -1,6 +1,3 @@
-
-
-
 import React, { useEffect, useState, useContext, useRef, useCallback } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
@@ -21,7 +18,7 @@ import { StreakCard } from './StreakCard';
 import { TechBuzzShotsCard } from './TechBuzzShotsCard';
 import { TechVibesCard } from './TechVibesCard';
 import BadgeProgressBar from './BadgeProgressBar';
-import { fetchStreakDetails, StreakDetails } from '@services/streak/StreakService';
+import { useStreak } from '@context/StreakContext';
 import videoService from '@services/Videos/videoService';
 const { getRecommendedVideos: fetchRecommendedVideos } = videoService;
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -51,6 +48,7 @@ const ProfileCardsRow: React.FC = () => {
   const { profileData, isLoading: profileLoading } = useProfileViewModel(userToken, userId);
   const { photo } = useProfilePhoto();
   const { totalScore, refreshScore, scoreDetails } = useContext(UserContext);
+  const { streakData, streakLoading } = useStreak();
 
   const [mentorLoading, setMentorLoading] = useState(true);
   const [mentorConnectData, setMentorConnectData] = useState<{ items: Meeting[] }>({ items: [] });
@@ -62,15 +60,14 @@ const ProfileCardsRow: React.FC = () => {
   const [blogs, setBlogs] = useState<any[]>([]);
   const [blogsLoading, setBlogsLoading] = useState(true);
   const [blogsError, setBlogsError] = useState<string | null>(null);
-  const [streakData, setStreakData] = useState<StreakDetails | null>(null);
-  const [streakLoading, setStreakLoading] = useState(true);
-  const [userRank, setUserRank] = useState<number | string>('--');
-  const [rankLoading, setRankLoading] = useState(true);
+  const [userRank, setUserRank] = useState<number>(0);
 
   // Cache refs to prevent unnecessary refetching
   const videosCacheRef = useRef<{ data: any[]; timestamp: number } | null>(null);
   const blogsCacheRef = useRef<{ data: any[]; timestamp: number } | null>(null);
   const CACHE_DURATION = 60000; // 60 seconds cache
+
+  // Remove old streak ref since we're using context now
 
   const getPoints = (badge: string) => {
     return scoreDetails?.badgeScores?.find((b: any) => b.badge === badge)?.points;
@@ -176,6 +173,24 @@ const ProfileCardsRow: React.FC = () => {
     fetchUserName();
   }, [userId, userToken]);
 
+  // Fetch user rank from leaderboard — re-fetches automatically when score updates
+  useEffect(() => {
+    const fetchUserRank = async () => {
+      if (!userId || !userToken) return;
+      try {
+        console.log('🔄 [PROFILE CARDS ROW] Fetching rank... (score:', totalScore, ')');
+        const result = await ProfileApiService.fetchLeaderboardRank(userId, userToken);
+        if (result.success && result.rank) {
+          setUserRank(result.rank);
+          console.log('✅ [PROFILE CARDS ROW] Rank updated:', result.rank);
+        }
+      } catch (error) {
+        console.error('Error fetching user rank:', error);
+      }
+    };
+    fetchUserRank();
+  }, [userId, userToken, totalScore]);
+
   // Refresh score from UserContext when component mounts or userId changes
   useEffect(() => {
     if (userId && userToken && refreshScore) {
@@ -277,48 +292,12 @@ const ProfileCardsRow: React.FC = () => {
     }
   }, []);
 
-  // Fetch streak details
-  const loadStreakDetails = useCallback(async () => {
-    if (!userId) return;
-    setStreakLoading(true);
-    try {
-      const data = await fetchStreakDetails(userId);
-      setStreakData(data);
-    } catch (err) {
-      console.error('Error fetching streak details:', err);
-    } finally {
-      setStreakLoading(false);
-    }
-  }, [userId]);
-
-  // Fetch user rank from leaderboard API
-  const fetchUserRank = useCallback(async () => {
-    if (!userId || !userToken) return;
-    try {
-      setRankLoading(true);
-      console.log("🔄 [HOME PORTFOLIO] Fetching leaderboard for user rank via ProfileApiService...");
-      const result = await ProfileApiService.fetchLeaderboardRank(userId, userToken);
-      if (result.success) {
-        setUserRank(result.rank);
-        console.log("✅ [HOME PORTFOLIO] User rank fetched:", result.rank);
-      } else {
-        setUserRank('--');
-      }
-    } catch (err) {
-      console.error('❌ [HOME PORTFOLIO] Error fetching leaderboard rank:', err);
-      setUserRank('--');
-    } finally {
-      setRankLoading(false);
-    }
-  }, [userId, userToken]);
-
   // Initial fetch on mount
   useEffect(() => {
     fetchTechBuzzVideos();
     fetchBlogs();
-    loadStreakDetails();
-    fetchUserRank();
-  }, [fetchTechBuzzVideos, fetchBlogs, loadStreakDetails, fetchUserRank]);
+    // Streak data is now managed by StreakContext
+  }, [fetchTechBuzzVideos, fetchBlogs]);
 
   // Refresh on focus only if cache is expired
   useFocusEffect(
@@ -331,8 +310,7 @@ const ProfileCardsRow: React.FC = () => {
       if (!blogsCacheRef.current || (now - blogsCacheRef.current.timestamp) >= CACHE_DURATION) {
         fetchBlogs(false);
       }
-      fetchUserRank();
-    }, [fetchTechBuzzVideos, fetchBlogs, fetchUserRank])
+    }, [fetchTechBuzzVideos, fetchBlogs])
   );
 
 
@@ -437,11 +415,11 @@ const ProfileCardsRow: React.FC = () => {
         profileData={profileData}
         dashboardScore={totalScore ?? 0}
         userName={userName}
-        userRank={userRank}
         onExplore={() => navigation.navigate('Profile')}
         backgroundColor={cardColors[0].bg}
         borderColor={cardColors[0].border}
         scoreDetails={scoreDetails}
+        userRank={userRank}
       />
 
       {/* Streak Card - Below Portfolio */}
