@@ -52,11 +52,11 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
   const computeStatus = (item: MentorItem): "Active" | "Upcoming" | "Expired" => {
     const start = buildStartDate(item.date, item.startTime);
     if (!start) return "Expired";
-    
+
     const mins = Number(item.durationMinutes ?? item.duration ?? 60) || 60;
     const end = new Date(start.getTime() + mins * 60000);
     const now = currentTime;
-    
+
     // Treat exact start time as Active (>= start && < end)
     if (now >= start && now < end) return "Active";
     if (now < start) return "Upcoming";
@@ -66,17 +66,17 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
   // Filter and sort: only Active and Upcoming, sorted by status then time
   const upcoming = useMemo(() => {
     if (!items) return [];
-    
+
     const filtered = items
       .filter(i => i && computeStatus(i) !== "Expired");
-    
+
     return filtered.slice().sort((a, b) => {
       const order = { Active: 1, Upcoming: 2, Expired: 3 };
       const sa = computeStatus(a);
       const sb = computeStatus(b);
       const diff = (order[sa] || 99) - (order[sb] || 99);
       if (diff !== 0) return diff;
-      
+
       // Within same status, earlier start first
       const ta = buildStartDate(a.date, a.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
       const tb = buildStartDate(b.date, b.startTime)?.getTime() ?? Number.MAX_SAFE_INTEGER;
@@ -88,7 +88,7 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
     <View style={[styles.mentorCard, { backgroundColor, borderColor }]}>
       <View style={styles.mentorTop}>
         <Text style={styles.h4}>Mentor Sphere</Text>
-        <TouchableOpacity onPress={onViewMore}><Text style={styles.link}>View more</Text></TouchableOpacity>
+        <TouchableOpacity onPress={onViewMore}><Text style={styles.link}>View More</Text></TouchableOpacity>
       </View>
 
       <View style={styles.mentorHeadingsRow}>
@@ -99,7 +99,7 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
 
       {loading ? (
         <View style={{ paddingVertical: 8 }}>
-          {[0,1,2,3].map(i => (
+          {[0, 1, 2, 3].map(i => (
             <View key={i} style={styles.skeletonItem} />
           ))}
         </View>
@@ -109,7 +109,7 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
             data={upcoming}
             keyExtractor={(it) => it.meetingId}
             renderItem={({ item, index }) => {
-              const dateObj = new Date(item.date[0], item.date[1]-1, item.date[2]);
+              const dateObj = new Date(item.date[0], item.date[1] - 1, item.date[2]);
               const formattedDate = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
               const hours = item.startTime[0];
               const minutes = String(item.startTime[1]).padStart(2, '0');
@@ -121,23 +121,23 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
                 <TouchableOpacity style={styles.mentorRow} onPress={() => onSelectMentor(item)}>
                   <View style={styles.mentorLeft}>
                     <Image source={defaultImg} style={styles.mentorAvatar} />
-                    <Text 
-                      style={[styles.mentorName, isTablet && styles.mentorNameTablet]} 
+                    <Text
+                      style={[styles.mentorName, isTablet && styles.mentorNameTablet]}
                       numberOfLines={1}
                       ellipsizeMode="tail"
                     >
                       {item.mentorName}
                     </Text>
                   </View>
-                  <Text 
-                    style={[styles.mentorTitle, isTablet && styles.mentorTitleTablet]} 
+                  <Text
+                    style={[styles.mentorTitle, isTablet && styles.mentorTitleTablet]}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
                     {item.title}
                   </Text>
-                  <Text 
-                    style={[styles.mentorTime, isTablet && styles.mentorTimeTablet]} 
+                  <Text
+                    style={[styles.mentorTime, isTablet && styles.mentorTimeTablet]}
                     numberOfLines={1}
                     ellipsizeMode="tail"
                   >
@@ -160,46 +160,46 @@ export const MentorSphereCard: React.FC<MentorProps> = ({ items, loading, onView
 
 // ----- Styles -----
 export const styles = StyleSheet.create({
-  mentorCard: { 
-    borderRadius: 12, 
-    padding: wp('3%'), 
+  mentorCard: {
+    borderRadius: 12,
+    padding: wp('3%'),
     marginVertical: hp('1%'),
     borderWidth: 1,
   },
-  mentorTop: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    marginBottom: hp('1%') 
+  mentorTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: hp('1%')
   },
-  h4: { 
-    fontSize: hp('2%'), 
+  h4: {
+    fontSize: hp('2%'),
     color: '#1A1A1A',
     fontFamily: 'PlusJakartaSans-Bold',
   },
-  link: { 
-    color: '#EA7B20', 
+  link: {
+    color: '#EA7B20',
     fontSize: hp('1.5%'), // Consistent link size
     fontFamily: 'PlusJakartaSans-Medium',
   },
-  mentorHeadingsRow: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
+  mentorHeadingsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     marginBottom: hp('1%'),
     paddingHorizontal: wp('1%'),
   },
-  smallHeading: { 
+  smallHeading: {
     fontSize: hp('1.61%'), // Consistent body text size
     color: '#1A1A1A',
     flex: 1,
     textAlign: 'center',
     fontFamily: 'PlusJakartaSans-Bold',
   },
-  skeletonItem: { 
-    height: hp('5.5%'), 
-    backgroundColor: '#f0f0f0', 
-    borderRadius: 6, 
-    marginBottom: hp('1%') 
+  skeletonItem: {
+    height: hp('5.5%'),
+    backgroundColor: '#f0f0f0',
+    borderRadius: 6,
+    marginBottom: hp('1%')
   },
   listContainer: {
     maxHeight: hp('22%'), // Max height for ~4 items, scrollable if more
@@ -210,31 +210,31 @@ export const styles = StyleSheet.create({
   flatListContent: {
     paddingBottom: 4,
   },
-  mentorRow: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    justifyContent: 'space-between', 
-    paddingVertical: hp('1.2%'), 
-    borderBottomWidth: 1, 
+  mentorRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: hp('1.2%'),
+    borderBottomWidth: 1,
     borderBottomColor: '#f0f0f0',
     paddingHorizontal: wp('1%'),
   },
-  mentorLeft: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
+  mentorLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
     flex: 1.2,
     marginRight: wp('2%'),
     minWidth: 0, // Important for text truncation
   },
-  mentorAvatar: { 
-    width: wp('8%'), 
-    height: wp('8%'), 
-    borderRadius: wp('4%'), 
+  mentorAvatar: {
+    width: wp('8%'),
+    height: wp('8%'),
+    borderRadius: wp('4%'),
     marginRight: wp('2.5%'),
     minWidth: 32,
     minHeight: 32,
   },
-  mentorName: { 
+  mentorName: {
     fontSize: hp('1.6%'), // Consistent sub-heading size
     color: '#1A1A1A',
     flex: 1,
@@ -244,9 +244,9 @@ export const styles = StyleSheet.create({
   mentorNameTablet: {
     fontSize: hp('1.8%'),
   },
-  mentorTitle: { 
-    flex: 1.3, 
-    textAlign: 'center', 
+  mentorTitle: {
+    flex: 1.3,
+    textAlign: 'center',
     fontSize: hp('1.5%'), // Consistent link size
     color: '#444',
     marginHorizontal: wp('1%'),
@@ -256,9 +256,9 @@ export const styles = StyleSheet.create({
   mentorTitleTablet: {
     fontSize: hp('1.7%'),
   },
-  mentorTime: { 
-    flex: 1.2, 
-    textAlign: 'right', 
+  mentorTime: {
+    flex: 1.2,
+    textAlign: 'right',
     fontSize: hp('1.5%'), // Consistent link size
     color: '#444',
     marginLeft: wp('1%'),

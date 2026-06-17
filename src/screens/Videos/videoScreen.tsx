@@ -319,17 +319,42 @@ const VerifiedVideosScreen: React.FC<{
 
       if (userId && userToken && currentUrl) {
         const matched = videos.find(
-          (v) => v.s3url === currentUrl
+          (v) => cleanUrl(v.s3url) === currentUrl
         );
 
         if (matched) {
-          trackVideoWatch(
-            userId,
-            matched.videoId,
-            userToken
-          );
+          const alreadyWatched =
+            matched.isWatched || matched.watched || matched.watchedStatus;
 
-          refreshScore?.();
+          if (!alreadyWatched) {
+            (async () => {
+              try {
+                await trackVideoWatch(userId, matched.videoId, userToken);
+
+                // Update local state to mark this video as watched immediately
+                setVideos((prevVideos) =>
+                  prevVideos.map((v) =>
+                    v.videoId === matched.videoId
+                      ? { ...v, isWatched: true }
+                      : v
+                  )
+                );
+
+                setFiltered((prevFiltered) =>
+                  prevFiltered.map((v) =>
+                    v.videoId === matched.videoId
+                      ? { ...v, isWatched: true }
+                      : v
+                  )
+                );
+
+                // Await score refresh to ensure backend database updates are loaded
+                await refreshScore?.();
+              } catch (error) {
+                console.error("❌ Error tracking video watch or refreshing score:", error);
+              }
+            })();
+          }
         }
       }
     }
@@ -455,8 +480,8 @@ const VerifiedVideosScreen: React.FC<{
                 transform: [{ scale: fsScale }],
               }}
             >
-              <Pressable 
-                style={{ flex: 1 }} 
+              <Pressable
+                style={{ flex: 1 }}
                 onPress={() => setPaused(!paused)}
               >
                 {videoSource && (
@@ -495,14 +520,14 @@ const VerifiedVideosScreen: React.FC<{
               </Pressable>
 
               {paused && videoSource && (
-                <View 
-                  style={{ 
-                    position: 'absolute', 
-                    top: '50%', 
-                    left: '50%', 
-                    transform: [{ translateX: -32 }, { translateY: -32 }], 
-                    zIndex: 10 
-                  }} 
+                <View
+                  style={{
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: [{ translateX: -32 }, { translateY: -32 }],
+                    zIndex: 10
+                  }}
                   pointerEvents="none"
                 >
                   <Icon name="play-circle" size={64} color="rgba(255,255,255,0.8)" />
@@ -535,8 +560,8 @@ const VerifiedVideosScreen: React.FC<{
 
               <View style={styles.bottomSlider}>
                 <Text style={styles.timeText}>{formatTime(currentTime)}</Text>
-                
-                <TouchableOpacity 
+
+                <TouchableOpacity
                   activeOpacity={1}
                   onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}
                   onPress={(e) => {
@@ -544,12 +569,12 @@ const VerifiedVideosScreen: React.FC<{
                     const { locationX } = e.nativeEvent;
                     const percent = locationX / trackWidth;
                     const seekTime = Math.max(0, Math.min(duration, percent * duration));
-                    
+
                     isSeekingRef.current = true;
                     videoRef.current.seek(seekTime);
                     setCurrentTime(seekTime);
                     setProgress(seekTime);
-                    
+
                     setTimeout(() => {
                       isSeekingRef.current = false;
                     }, 500);
@@ -557,11 +582,11 @@ const VerifiedVideosScreen: React.FC<{
                   style={styles.sliderTouchable}
                 >
                   <View style={styles.sliderTrack}>
-                    <View 
+                    <View
                       style={[
-                        styles.sliderFill, 
+                        styles.sliderFill,
                         { width: duration ? `${(currentTime / duration) * 100}%` : '0%' }
-                      ]} 
+                      ]}
                     />
                   </View>
                 </TouchableOpacity>

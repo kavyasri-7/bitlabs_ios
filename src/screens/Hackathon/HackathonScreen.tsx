@@ -647,10 +647,10 @@ const HackathonScreen = () => {
           >
             {[
               { key: "MY" as TabKey, label: "My Arena" },
-              { key: "RECOMMENDED" as TabKey, label: "Picks for you" },
+              { key: "RECOMMENDED" as TabKey, label: "Picks For You" },
               { key: "ACTIVE" as TabKey, label: "In Action" },
-              { key: "UPCOMING" as TabKey, label: "On the Horizon" },
-              { key: "COMPLETED" as TabKey, label: "Past battles" },
+              { key: "UPCOMING" as TabKey, label: "On The Horizon" },
+              { key: "COMPLETED" as TabKey, label: "Past Battles" },
             ].map((tab) => (
               <TouchableOpacity
                 key={tab.key}

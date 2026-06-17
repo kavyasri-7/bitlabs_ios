@@ -610,7 +610,7 @@ const MentorConnect: React.FC = () => {
           <View style={styles.searchInputContainer}>
             <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
             <TextInput
-              placeholder="Search by mentor, title, or topic..."
+              placeholder="Search by Mentor, Title, Or Topic..."
               placeholderTextColor="#888"
               style={styles.searchInput}
               value={searchQuery}

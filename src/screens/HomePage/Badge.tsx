@@ -303,9 +303,9 @@ const Badge = ({ navigation }: any) => {
   };
 
   const steps = [
-    { id: 1, label: 'General aptitude test', icon: aptitudeIcon },
-    { id: 2, label: 'Technical test', icon: technicalIcon },
-    { id: 3, label: 'Verification done', icon: verificationIcon },
+    { id: 1, label: 'General Aptitude Test', icon: aptitudeIcon },
+    { id: 2, label: 'Technical Test', icon: technicalIcon },
+    { id: 3, label: 'Verification Done', icon: verificationIcon },
   ];
 
   if (loading) {

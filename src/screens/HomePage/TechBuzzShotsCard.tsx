@@ -47,7 +47,7 @@ export const TechBuzzShotsCard: React.FC<TechBuzzShotsCardProps> = ({
       <View style={styles.header}>
         <Text style={styles.title}>Tech Buzz Shorts</Text>
         <TouchableOpacity onPress={onViewMore}>
-          <Text style={styles.viewMoreLink}>View more</Text>
+          <Text style={styles.viewMoreLink}>View More</Text>
         </TouchableOpacity>
       </View>
 

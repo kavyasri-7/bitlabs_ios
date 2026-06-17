@@ -16,7 +16,7 @@ const LMSMainPage = () => {
   const [courses, setCourses] = useState([
     {
       id: 1,
-      name: "HTML & CSS",
+      name: "Html & Css",
       progress: 0,
       image: require("../../assests/Images/backgrounds/html&css.png"),
     },
@@ -34,7 +34,7 @@ const LMSMainPage = () => {
     // },
     {
       id: 4,
-      name: "SQL",
+      name: "Sql",
       progress: 10,
       image: require('../../assests/Images/backgrounds/sql.jpeg'),
     },
@@ -58,31 +58,31 @@ const LMSMainPage = () => {
     },
     {
       id: 6,
-      name: "react.js",
+      name: "ReactJs",
       progress: 75,
       image: require('../../assests/Images/backgrounds/React-JS.png'),
     },
     {
       id: 5,
-      name: "javascript & es6",
+      name: "Javascript & Es6",
       progress: 75,
       image: require('../../assests/Images/backgrounds/javascript.jpeg'),
     },
     {
       id: 3,
-      name: "java",
+      name: "Java",
       progress: 75,
       image: require('../../assests/Images/backgrounds/Java.png'),
     },
     {
       id: 8,
-      name: "java exceptions & algorithms",
+      name: "Java Exceptions & Algorithms",
       progress: 75,
       image: require('../../assests/Images/backgrounds/javaException.jpeg'),
     },
     {
       id: 9,
-      name: "spring boot",
+      name: "Spring Boot",
       progress: 75,
       image: require('../../assests/Images/backgrounds/Springboot.png'),
     },

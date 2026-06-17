@@ -67,7 +67,7 @@ export const LmsCourseCard: React.FC<Props> = ({
         </View>
 
         <TouchableOpacity style={styles.button} onPress={onPress}>
-          <Text style={styles.buttonText}>Get Started</Text>
+          <Text style={styles.buttonText}>Explore courses</Text>
         </TouchableOpacity>
       </LinearGradient>
     </View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   imageContainer: {
     position: "absolute",
     top: -10,
-    left: 0,
+    left: 15,
     width: 120,
     height: 120,
     zIndex: 10,
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
 
   textContainer: {
     flex: 1,
-    paddingLeft: 24,
+    paddingLeft: 38,
     paddingTop: 2,
   },
 

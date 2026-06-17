@@ -185,7 +185,7 @@ function Dashboard() {
                     {verified && <Icon5 name="verified" size={25} color="#F46F16" style={{ marginLeft: 4, marginTop: screenHeight * 0.015, }} />}
                   </View>
                   <Text style={[styles.textBelowNavbar1, isTablet && { fontSize: wp('2%'), }]}>
-                    {setmsg ? 'Welcome' : 'Welcome back'} {/* Conditional rendering */}
+                    {setmsg ? 'Welcome' : 'Welcome Back'} {/* Conditional rendering */}
                   </Text>
                 </View>
 
