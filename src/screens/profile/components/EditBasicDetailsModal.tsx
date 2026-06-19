@@ -140,10 +140,10 @@ const EditBasicDetailsModal: React.FC<EditBasicDetailsModalProps> = ({
         const trimmedAddress = safeValue.trim();
         if (!trimmedAddress) {
           return 'Address is required';
-        } else if (trimmedAddress.length < 3) {
-          return 'Address must be at least 3 characters';
-        } else if (trimmedAddress.length > 100) {
-          return 'Address must not exceed 100 characters';
+        } else if (trimmedAddress.length < 10) {
+          return 'Address must be at least 10 characters';
+        } else if (trimmedAddress.length > 200) {
+          return 'Address must not exceed 200 characters';
         } else if (/\s{2,}/.test(safeValue)) {
           return 'Only one space allowed between characters';
         }
@@ -231,14 +231,14 @@ const EditBasicDetailsModal: React.FC<EditBasicDetailsModalProps> = ({
       }
     }
 
-    // Validate address: min 3, max 100, only one space between characters
+    // Validate address: min 10, max 200, only one space between characters
     const trimmedAddress = safeFormData.address.trim();
     if (!trimmedAddress) {
       newErrors.address = 'Address is required';
-    } else if (trimmedAddress.length < 3) {
-      newErrors.address = 'Address must be at least 3 characters';
-    } else if (trimmedAddress.length > 100) {
-      newErrors.address = 'Address must not exceed 100 characters';
+    } else if (trimmedAddress.length < 10) {
+      newErrors.address = 'Address must be at least 10 characters';
+    } else if (trimmedAddress.length > 200) {
+      newErrors.address = 'Address must not exceed 200 characters';
     } else if (/\s{2,}/.test(safeFormData.address)) {
       newErrors.address = 'Only one space allowed between characters';
     }
@@ -383,150 +383,150 @@ const EditBasicDetailsModal: React.FC<EditBasicDetailsModalProps> = ({
               contentContainerStyle={styles.scrollContent}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps="handled">
-            {/* <View style={styles.sectionHeader}>
+              {/* <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>Basic details</Text>
             </View> */}
-            <View style={styles.form}>
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Name <Text style={styles.required}>*</Text></Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.name && styles.inputError,
-                    focusedField === 'name' && styles.inputFocused,
-                  ]}
-                  value={formData.name}
-                  onChangeText={value => handleChange('name', value)}
-                  placeholder="Enter full name"
-                  placeholderTextColor="#9ca3af"
-                  onFocus={() => setFocusedField('name')}
-                  onBlur={() => setFocusedField(null)}
-                />
-                {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Role <Text style={styles.required}>*</Text></Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.role && styles.inputError,
-                    focusedField === 'role' && styles.inputFocused,
-                  ]}
-                  value={formData.role}
-                  onChangeText={value => handleChange('role', value)}
-                  placeholder="Enter role"
-                  placeholderTextColor="#9ca3af"
-                  onFocus={() => setFocusedField('role')}
-                  onBlur={() => setFocusedField(null)}
-                />
-                {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Mobile Number <Text style={styles.required}>*</Text></Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.mobileNumber && styles.inputError,
-                    focusedField === 'mobileNumber' && styles.inputFocused,
-                  ]}
-                  value={formData.mobileNumber}
-                  onChangeText={value => {
-                    const numeric = value.replace(/[^0-9]/g, '');
-                    if (numeric.length <= 10) {
-                      handleChange('mobileNumber', numeric);
-                    }
-                  }}
-                  placeholder="Enter mobile number"
-                  placeholderTextColor="#9ca3af"
-                  keyboardType="phone-pad"
-                  maxLength={10}
-                  onFocus={() => setFocusedField('mobileNumber')}
-                  onBlur={() => setFocusedField(null)}
-                />
-                {errors.mobileNumber && (
-                  <Text style={styles.errorText}>{errors.mobileNumber}</Text>
-                )}
-              </View>
-
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Email</Text>
-                <View style={[styles.input, styles.inputDisabled]}>
-                  <Text
-                    style={styles.inputDisabledText}
-                    numberOfLines={1}
-                    ellipsizeMode="tail"
-                  >
-                    {formData.email || 'Email'}
-                  </Text>
+              <View style={styles.form}>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Name <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      errors.name && styles.inputError,
+                      focusedField === 'name' && styles.inputFocused,
+                    ]}
+                    value={formData.name}
+                    onChangeText={value => handleChange('name', value)}
+                    placeholder="Enter full name"
+                    placeholderTextColor="#9ca3af"
+                    onFocus={() => setFocusedField('name')}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
                 </View>
-              </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Pass Year <Text style={styles.required}>*</Text></Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.passYear && styles.inputError,
-                    focusedField === 'passYear' && styles.inputFocused,
-                  ]}
-                  value={formData.passYear}
-                  onChangeText={value => {
-                    const numeric = value.replace(/[^0-9]/g, '');
-                    if (numeric.length <= 4) {
-                      handleChange('passYear', numeric);
-                    }
-                  }}
-                  placeholder="Enter pass year"
-                  placeholderTextColor="#9ca3af"
-                  keyboardType="numeric"
-                  maxLength={4}
-                  onFocus={() => setFocusedField('passYear')}
-                  onBlur={() => setFocusedField(null)}
-                />
-                {errors.passYear && <Text style={styles.errorText}>{errors.passYear}</Text>}
-              </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Role <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      errors.role && styles.inputError,
+                      focusedField === 'role' && styles.inputFocused,
+                    ]}
+                    value={formData.role}
+                    onChangeText={value => handleChange('role', value)}
+                    placeholder="Enter role"
+                    placeholderTextColor="#9ca3af"
+                    onFocus={() => setFocusedField('role')}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  {errors.role && <Text style={styles.errorText}>{errors.role}</Text>}
+                </View>
 
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Address <Text style={styles.required}>*</Text></Text>
-                <TextInput
-                  style={[
-                    styles.input,
-                    errors.address && styles.inputError,
-                    focusedField === 'address' && styles.inputFocused,
-                  ]}
-                  value={formData.address}
-                  onChangeText={value => handleChange('address', value)}
-                  placeholder="Enter address"
-                  placeholderTextColor="#9ca3af"
-                  onFocus={() => setFocusedField('address')}
-                  onBlur={() => setFocusedField(null)}
-                />
-                {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
-              </View>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Mobile Number <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      errors.mobileNumber && styles.inputError,
+                      focusedField === 'mobileNumber' && styles.inputFocused,
+                    ]}
+                    value={formData.mobileNumber}
+                    onChangeText={value => {
+                      const numeric = value.replace(/[^0-9]/g, '');
+                      if (numeric.length <= 10) {
+                        handleChange('mobileNumber', numeric);
+                      }
+                    }}
+                    placeholder="Enter mobile number"
+                    placeholderTextColor="#9ca3af"
+                    keyboardType="phone-pad"
+                    maxLength={10}
+                    onFocus={() => setFocusedField('mobileNumber')}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  {errors.mobileNumber && (
+                    <Text style={styles.errorText}>{errors.mobileNumber}</Text>
+                  )}
+                </View>
 
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Email</Text>
+                  <View style={[styles.input, styles.inputDisabled]}>
+                    <Text
+                      style={styles.inputDisabledText}
+                      numberOfLines={1}
+                      ellipsizeMode="tail"
+                    >
+                      {formData.email || 'Email'}
+                    </Text>
+                  </View>
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Pass Year <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      errors.passYear && styles.inputError,
+                      focusedField === 'passYear' && styles.inputFocused,
+                    ]}
+                    value={formData.passYear}
+                    onChangeText={value => {
+                      const numeric = value.replace(/[^0-9]/g, '');
+                      if (numeric.length <= 4) {
+                        handleChange('passYear', numeric);
+                      }
+                    }}
+                    placeholder="Enter pass year"
+                    placeholderTextColor="#9ca3af"
+                    keyboardType="numeric"
+                    maxLength={4}
+                    onFocus={() => setFocusedField('passYear')}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  {errors.passYear && <Text style={styles.errorText}>{errors.passYear}</Text>}
+                </View>
+
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>Address <Text style={styles.required}>*</Text></Text>
+                  <TextInput
+                    style={[
+                      styles.input,
+                      errors.address && styles.inputError,
+                      focusedField === 'address' && styles.inputFocused,
+                    ]}
+                    value={formData.address}
+                    onChangeText={value => handleChange('address', value)}
+                    placeholder="Enter address"
+                    placeholderTextColor="#9ca3af"
+                    onFocus={() => setFocusedField('address')}
+                    onBlur={() => setFocusedField(null)}
+                  />
+                  {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
+                </View>
+
+              </View>
+            </ScrollView>
+
+            <View style={styles.buttonRow}>
+              <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+                <Text style={styles.cancelButtonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.saveButton, loading && styles.saveButtonDisabled]}
+                onPress={handleSave}
+                disabled={loading}>
+                {loading ? (
+                  <ActivityIndicator color="#fff" />
+                ) : (
+                  <Text style={styles.saveButtonText}>Save</Text>
+                )}
+              </TouchableOpacity>
             </View>
-          </ScrollView>
-
-          <View style={styles.buttonRow}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.saveButton, loading && styles.saveButtonDisabled]}
-              onPress={handleSave}
-              disabled={loading}>
-              {loading ? (
-                <ActivityIndicator color="#fff" />
-              ) : (
-                <Text style={styles.saveButtonText}>Save</Text>
-              )}
-            </TouchableOpacity>
           </View>
+          <Toast config={toastConfig} />
         </View>
-        <Toast config={toastConfig} />
-      </View>
       </KeyboardAvoidingView>
     </Modal>
   );

@@ -335,14 +335,14 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
       newErrors.pincode = 'PIN code cannot start with 0';
     }
 
-    // Address - Required, min 3 characters
+    // Address - Required, min 10 characters
     const trimmedAddress = formData.address.trim();
     if (!trimmedAddress) {
       newErrors.address = 'Address is required';
-    } else if (trimmedAddress.length < 3) {
-      newErrors.address = 'Address must be at least 3 characters';
-    } else if (trimmedAddress.length > 500) {
-      newErrors.address = 'Address must not exceed 500 characters';
+    } else if (trimmedAddress.length < 10) {
+      newErrors.address = 'Address must be at least 10 characters';
+    } else if (trimmedAddress.length > 200) {
+      newErrors.address = 'Address must not exceed 200 characters';
     } else if (/\s{2,}/.test(formData.address)) {
       newErrors.address = 'Only one space allowed between words';
     }
@@ -638,10 +638,10 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
                 </TouchableOpacity>
               </View>
 
-              <ScrollView 
-                style={styles.scrollView} 
+              <ScrollView
+                style={styles.scrollView}
                 contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false} 
+                showsVerticalScrollIndicator={false}
                 keyboardShouldPersistTaps="handled"
                 bounces={false}>
                 <View style={styles.form}>
@@ -811,6 +811,8 @@ const EditPersonalDetailsModal: React.FC<EditPersonalDetailsModalProps> = ({
                       multiline
                       numberOfLines={4}
                       textAlignVertical="top"
+                      maxLength={100}
+
                     />
                     {errors.address && <Text style={styles.errorText}>{errors.address}</Text>}
                   </View>
